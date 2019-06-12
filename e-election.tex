@@ -1,0 +1,176 @@
+% Electronic Election System
+%
+% File:         e-election.tex
+% Author:       Bob Walton (walton@acm.org)
+% Date:		See \date below.
+
+\documentclass[12pt]{article}
+
+\usepackage{times}
+\usepackage{makeidx}
+
+\makeindex
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\textwidth}{6.5in}
+\raggedbottom
+
+\setlength{\unitlength}{1in}
+
+\pagestyle{headings}
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{1ex}
+
+% Begin \tableofcontents surgery.
+
+\newcount\AtCatcode
+\AtCatcode=\catcode`@
+\catcode `@=11	% @ is now a letter
+
+\renewcommand{\contentsname}{}
+\renewcommand\l@section{\@dottedtocline{1}{0.1em}{1.4em}}
+\renewcommand\l@table{\@dottedtocline{1}{0.1em}{1.4em}}
+\renewcommand\tableofcontents{%
+    \begin{list}{}%
+	     {\setlength{\itemsep}{0in}%
+	      \setlength{\topsep}{0in}%
+	      \setlength{\parsep}{1ex}%
+	      \setlength{\labelwidth}{0in}%
+	      \setlength{\baselineskip}{1.5ex}%
+	      \setlength{\leftmargin}{0.8in}%
+	      \setlength{\rightmargin}{0.8in}}%
+    \item\@starttoc{toc}%
+    \end{list}}
+\renewcommand\listoftables{%
+    \begin{list}{}%
+	     {\setlength{\itemsep}{0in}%
+	      \setlength{\topsep}{0in}%
+	      \setlength{\parsep}{1ex}%
+	      \setlength{\labelwidth}{0in}%
+	      \setlength{\baselineskip}{1.5ex}%
+	      \setlength{\leftmargin}{1.0in}%
+	      \setlength{\rightmargin}{1.0in}%
+	      }%
+    \item\@starttoc{lot}%
+    \end{list}}
+
+\catcode `@=\AtCatcode	% @ is now restored
+
+% End \tableofcontents surgery.
+
+\newcommand{\CN}[2]%	Change Notice.
+    {\hspace*{0in}\marginpar{\sloppy \raggedright \it \footnotesize
+     $^{\mbox{#1}}$#2}}
+    % Change notice.
+
+\newcommand{\figref}[1]{\ref{#1}$\,^{p\,\pageref{#1}}$}
+\newcommand{\pagref}[1]{p\pageref{#1}}
+\newcommand{\pagnote}[1]{$\,^{p\,\pageref{#1}}$}
+
+\newcommand{\EOL}{\penalty \exhyphenpenalty}
+
+\newlength{\figurewidth}
+\setlength{\figurewidth}{\textwidth}
+\addtolength{\figurewidth}{-0.40in}
+
+\newsavebox{\figurebox}
+
+\newenvironment{boxedfigure}[1][!btp]%
+	{\begin{figure*}[#1]
+	 \begin{lrbox}{\figurebox}
+	 \begin{minipage}{\figurewidth}
+
+	 \vspace*{1ex}}%
+	{
+	 \vspace*{1ex}
+
+	 \end{minipage}
+	 \end{lrbox}
+	 \begin{center}
+	 \fbox{\hspace*{0.1in}\usebox{\figurebox}\hspace*{0.1in}}
+	 \end{center}
+	 \end{figure*}}
+
+\newenvironment{indpar}[1][0.3in]%
+	{\begin{list}{}%
+		     {\setlength{\itemsep}{0in}%
+		      \setlength{\topsep}{0in}%
+		      \setlength{\parsep}{1ex}%
+		      \setlength{\labelwidth}{#1}%
+		      \setlength{\leftmargin}{#1}%
+		      \addtolength{\leftmargin}{\labelsep}}%
+	 \item}%
+	{\end{list}}
+
+
+\begin{document}
+        
+\title{An Electronic Election System}
+
+\author{Robert L. Walton\thanks{Copyright 2019 Robert L. Walton.
+Permission to copy this document {\bf verbatim} is granted by the author
+to the public.}}
+
+\date{June 12, 2019}
+
+\maketitle
+
+\newpage
+\begin{center}
+\large \bf Table of Contents
+\end{center}
+
+\bigskip
+
+\tableofcontents 
+
+\newpage
+
+\section{Introduction}
+
+Our purpose is to specify an all-electronic election system
+suitable for replacing the current optical paper system
+used in Massachusetts.  Our system is based on the notion
+of `tamper proof software', which is software that is
+known to do what it should do.
+
+\section{Outline}
+
+A Private Voting Machine
+(PVM) is constructed from a single thumb drive and a
+registration card.  Part of the thumb drive contains the
+tamper proof software of the PVM, part contains an encryped
+data set called a Voter Lock Box (V-Box), and the registration
+card contains a passkey that is entered on the keyboard in
+order to decrypt/encrypt the V-Box.  The software runs on
+a (fairly) arbitrary computer, is bootstrapped directly,
+runs without using any operating system or BIOS,
+uses only RAM memory during operation,
+writes the encryped V-Box back to the thumb drive, and sends
+a very few encrypted messages to other `machines' in the
+system.
+
+The other machines are the Registration Machines, which make
+ready-to-mark ballots available and time-stamp and certify
+encrypted finished ballots; the Collection Machines that collect
+finished ballots; and the Counting Machines that count the
+ballots.  Each machine has the same design as the PVM, except
+these other machines are each run by a election officials, and
+each are replicated with different officials running different
+replicas.  Each Counting Machine also uses separate
+thumb drives containing master lock boxes
+(M-Boxes), and requires 5 out of 10 election officials to cooperatively
+provide decrypted M-Boxes in order to decrypt ballots and
+produce final counts.
+
+Each Machine as a public key and a private key (or in the
+case of a Counting Machine, 10 private keys).  Each precinct
+has its own separate set of Counting Machines and M-Boxes with
+private keys.
+
+\section{Tamper Proof Software}
+
+
+
+\end{document}
