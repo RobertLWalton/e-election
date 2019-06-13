@@ -220,21 +220,34 @@ in public/private pairs.
 Each Registration and Collection
 machine has a URL which serves as its name.
 
-Each Private Voting Machine and Counting Machine uses its
-public key as its name.
+Each Private Voting Machine and each Counting Machine
+has a Unique ID, or UID, which is a 1024 bit random number
+used to identify the machine.  This UID serves as the
+machine's name.
+
+When one machine sends a message to another, the sender
+encrypts the message proper with the sender's private
+key, and attaches the unencrypted sender's name to the
+message.  The receive is expected to have the public
+key of the sender.  Thus public keys are not published,
+though the system is designed so that publishing public
+keys will not compromise security or essentual privacy.
 
 \section{Registration Machine Details}
 
 A Registration Machine is run by a single election official
-who holds the passkey the the machine's locked box.  The
+who holds registration card containing the the passkey to
+the machine's locked box.  The
 locked box contains:
 \begin{enumerate}
 \item The private key of the Registration Machine.
 \item Public keys of all Registration Machines, all Collection
-Machines, all Counting M-Boxes, and all Private Voting Machines.
+Machines, and all Counting M-Boxes.
 \item Machine names (URLs) of other Registration Machines and all Collection
 Machines.
 \item The unmarked ballot.
+\item UIDs and associated public keys of all registered Private Voting
+Machines.
 \item A log of any transactions the Registration Machine has
 been involved in.
 \end{enumerate}
@@ -245,14 +258,16 @@ Private Voting Machines:
 
 \item
 Request for Ballot.  The reply includes the unmarked ballot
-and any public keys and machine names known to the Registration
+and any public keys and names of Registration and
+Collection Machines known to the Registration Machine,
+and also the public keys of any M-Boxes known to the Registration
 Machine.
 
 \item
 Request for Certificate.  The request includes the signature
 of an encrypted ballot prepared by the requesting Private
 Voting Machine.  The reply is a certificate containing
-the signature, the Private Voting Machine's name (public key),
+the signature, the Private Voting Machine's UID,
 and a signature of the certificate by the Registation Machine.
 
 \end{enumerate}
@@ -264,11 +279,50 @@ unencrypted public key of the requester is included in the
 request in order to identify the requester.  Requesters are
 always Private Voting Machines.
 
+Replys are encrypted with the private key of the replying Registration Machine.
+
 A Registration Machine also permits the public to view online
 its log and all data except the Registration Machine's
 private key.  The voting list, which associates each Private
 Voting Machine public key with a voter name, address, sex,
 age, etc., is \underline{not} part of this electronic
 election system (but might be in an adjunct to this system).
+
+A Registration Machine may serve requests from more than
+one precinct, but the information flow remains specific
+to the precinct.  Each precinct should have at least 3
+Registration Machines available.
+
+\section{Private Voting Machine Details}
+
+A Private Voting Machine is run by a single voter
+who holds the registration card containing the passkey to
+the machine's locked box.
+
+Initially the locked box contains:
+\newcounter{PVM-COUNTER}
+\begin{enumerate}
+\item The public and private key of the Private Voting Machine.
+\item Public keys of all Registration Machines.
+\setcounter{PVM-COUNTER}{\value{enumi}}
+\end{enumerate}
+
+The Private Voting Machine
+makes requests of Registration Machines.  In every case
+at least 3 Registration Machines should be used and the
+results compared or tabulated to avoid single point failures.
+
+The first thing a Private Voting Machine does, when prompted by
+its voter, is make a Request Ballot, and use the replies to
+add to its locked box the following information:
+\begin{enumerate}
+\setcounter{enumi}{\value{PVM-COUNTER}}
+\item Public keys of all Registration Machines, all Collection
+Machines, and all Counting M-Boxes.
+\item Machine names (URLs) of all Registration Machines and all Collection
+Machines.
+\item The unmarked ballot.
+\end{enumerate}
+This can be done days or just minutes before the voter votes.
 
 \end{document}
