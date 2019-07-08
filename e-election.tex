@@ -112,7 +112,7 @@
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}}
 
-\date{June 23, 2019}
+\date{July 8, 2019}
 
 \maketitle
 
@@ -311,6 +311,7 @@ the machine's locked box.
 Initially the locked box contains:
 \newcounter{PVM-COUNTER}
 \begin{enumerate}
+\item UID of the Private Voting Machine.
 \item The public and private key of the Private Voting Machine.
 \item Public keys of some Registration Machines.
 \item Machine names (URLs) of some Registration Machines.
@@ -357,7 +358,6 @@ as on the one hand a voter may receive new information and
 want to change the vote, and on the other hand to avoid system
 congestion it is convenient to have votes strung out over time.
 
-
 \section{Ballot Encryption Details}
 
 The ballot is encrypted as follows.
@@ -365,17 +365,35 @@ The ballot is encrypted as follows.
 First, the ballot is randomized by a process something like
 the following.  A long random number is generated.  The first
 part is used as instructions to place the ballot bits in
-various random places in the second part of the random number.
+various random places in the second part of the random number
+(ballots have very few bits).
 
 Second, a random symmetric key S is generated and used to encrypt
 the randomized ballot.  Then 10 more random keys K1, ..., K10 are generated
-and used in a 10-way encryption scheme to encrypt S.  The 10-way
-scheme is such that any 5 of the K-keys can decript the encrypted S.
-Then each K-key is encripted by the public key of one of counting M-boxes.
+and used in 5-way Shamir Secret Sharing encryption
+scheme to encrypt S.  The 5-way
+scheme is such that any 5 of the 10 K-keys can decript the encrypted S.
+Then each K-key is encrypted by the public key of one of the 10 M-boxes.
 
 The encrypted ballot consists of the randomized encrypted ballot proper,
-the encripted key S, and the 10 encrypted keys K.  It can be decrypted
+the encripted key S, and the 10 encrypted K-Keys.  It can be decrypted
 by any 5 M-boxes.  It does \underline{not} contain the voter's ID.
+
+\section{Certificate Details}
+
+For each encrypted ballot, several certificates are generated
+by Registration Machines acting independently.  Each certificate
+contains:
+\begin{enumerate}
+\item UID of Private Voting Machine submitting the encrypted ballot.
+\item Signature of the encrypted ballot as computed by the
+      Private Voting Machine.
+\item Date and time, as computed by the Registration Machine.
+\item Information for system debugging, such as the version ID of the
+      Private Voting Machine software and the URL of the Registration
+      Machine.
+\end{enumerate}
+
 
 
 \end{document}
