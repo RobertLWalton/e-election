@@ -398,6 +398,84 @@ contains:
       Machine.
 \end{enumerate}
 
+\section{Collection Machine Details}
 
+The Collection Machines receive the submitted ballots, each containing
+an encrypted ballot and at least 3 certificates for the encrypted
+ballot.
+
+At the end of voting the Collection Machines communicate with each
+other so all have the same set of submitted ballots.  Then each
+Collection Machine validates the ballots and submits all the
+valid encrypted ballots, but \underline{without} their certificates, to
+each Counting Machine.
+
+A ballot is valid unless:
+
+\begin{enumerate}
+\item It has been superceded by a later ballot from the same
+Private Voting Machine.
+\item It is from a Private Voting Machine that has been de-registered
+(see below).
+\item It is from a test Private Voting Machine that is
+being used as a system/hardware tester (see below).
+\end{enumerate}
+
+Note that messages received that cannot be decrypted using the
+private key of the Collection Machine and a public key known
+to the Collection Machine are discarded, and so cannot contain
+ballots that are either valid or invalid.  Collection Machine
+public/private key pairs a election specific, so ballots for
+the wrong election will not be considered.
+
+\section{Counting Machine Details}
+
+Counting Machines recieve a complete set of encrypted ballots
+from each collection machine, and check to be sure these sets
+are the same for each Counting Machine.
+
+Each Counting Machine is then given 5 M-boxes and proceeds to
+decrypt and count the ballots.
+
+\section{De-Registration and Testing}
+
+If a Private Voting Machine (i.e., its thumb drive and registration
+card) is lost or stolen, the voter may have the machine de-registered
+and replaced by a new Private Voting Machine.
+
+Some Private Voting Machines are used for system/hardware testing.
+These are used by election officials to cast known votes that can
+be checked to ensure that the system and hardware is working as
+desired.
+
+To check test votes, the encrypted ballots are submitted to a Test
+Machine not otherwise mentioned which is given 5 M-boxes and
+decrypts the ballots so they can be compared with hand written
+notes taken by the election officials that cast the ballots.
+The system does not know which Private Voting Machines are test
+machines until after voting ends and the Collection Machines
+are given this information.
+
+The hardware used to run test PVMs should be of kinds randomly
+choosen from the kinds of hardware used by voters, so that if a
+hardware manufacturer is producing hacked hardware that corrupts
+ballots, this will be eventually detected.
+
+\section{Vote Buying}
+
+No voting system prevents a person to knows a voter well from
+`buying' the voter's vote with some favor.
+
+However buying votes on a large enough scale to influence elections
+is difficult to do without being detected and prosecuted.
+This is just as true of our proposed E-Election System as of
+current voting systems.
+
+The only thing easier to do in the E-Election System is verification
+that a vote bought from a stranger
+is what the buyer wants it to be.  The E-Election
+System shares this with absentee voting systems.  However, since its
+nearly impossible to buy large numbers of votes without being detected,
+such easier verification is not significant.
 
 \end{document}
