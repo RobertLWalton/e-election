@@ -112,7 +112,7 @@
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}}
 
-\date{July 8, 2019}
+\date{July 19, 2019}
 
 \maketitle
 
@@ -155,7 +155,7 @@ ready-to-mark ballots available and time-stamp and certify
 encrypted finished ballots; the Collection Machines that collect
 finished ballots; and the Counting Machines that count the
 ballots.  Each machine has the same design as the PVM, except
-these other machines are each run by a election officials, and
+these other machines are each run by an election official, and
 each are replicated with different officials running different
 replicas.  Each Counting Machine also uses separate
 thumb drives containing master lock boxes
@@ -168,6 +168,9 @@ case of a Counting Machine, 10 private keys).  Each precinct
 has its own separate set of Counting Machines and M-Boxes with
 private keys.
 
+Collection Machines, Counting Machines, and M-Boxes may be
+specific to a particular election.
+
 \section{Tamper Proof Software}
 
 Tamper Proof Software is software written in a `tamper proof'
@@ -175,8 +178,8 @@ programming language
 that has the following property:
 \begin{indpar}
 The translation of souce code to binary files is so precisely
-specified, that several independent groups of programmers can
-write compilers with will produce identical binaries from any
+specified that several independent groups of programmers can
+write compilers that will produce identical binaries from any
 given source.
 \end{indpar}
 
@@ -237,7 +240,7 @@ machine's name.
 When one machine sends a message to another, the sender
 encrypts the message proper with the sender's private
 key, and attaches the unencrypted sender's name to the
-message.  The receive is expected to have the public
+message.  The receiver is expected to have the public
 key of the sender.  Thus public keys are not published,
 though the system is designed so that publishing public
 keys will not compromise security or essentual privacy.
@@ -258,7 +261,8 @@ Machines.
 \item UIDs and associated public keys of all registered Private Voting
 Machines.
 \item A log of any transactions the Registration Machine has
-been involved in.
+been involved in.  The Certificates issued by the Registration Machine
+are included in its log.
 \end{enumerate}
 
 A Registration Machine receives two kinds of requests from
@@ -281,18 +285,13 @@ and a signature of the certificate by the Registation Machine.
 
 \end{enumerate}
 
-Requests to the Registration Machine are encrypted with the
-private key of the requester as a means of certifying that
-the request does indeed come from the requester.  However the
-unencrypted public key of the requester is included in the
-request in order to identify the requester.  Requesters are
-always Private Voting Machines.
-
-Replys are encrypted with the private key of the replying Registration Machine.
+Requesters are always Private Voting Machines, and all replies
+are sent to just the requester.
 
 A Registration Machine also permits the public to view online
 its log and all data except the Registration Machine's
-private key.  The voting list, which associates each Private
+private key and the public keys of other machines.
+The voting list, which associates each Private
 Voting Machine public key with a voter name, address, sex,
 age, etc., is \underline{not} part of this electronic
 election system (but might be in an adjunct to this system).
@@ -347,6 +346,8 @@ to the encrypted ballot to form the submitted ballot.  Each
 certificate contains the signature of the encrypted ballot, the
 UID of the Private Voting Machine, and a time stamp.  The certificates
 are signed by the Registration Machines but are \underline{not} encrypted.
+The certificates are copied to the Registration Machine log, and can be
+be viewed by the public.
 
 The submitted ballot, containing the encrypted ballot and
 at least three signatures, is now sent by the Private Voting
@@ -364,19 +365,22 @@ The ballot is encrypted as follows.
 
 First, the ballot is randomized by a process something like
 the following.  A long random number is generated.  The first
-part is used as instructions to place the ballot bits in
+part is used as instructions to place the ballot voting bits in
 various random places in the second part of the random number
-(ballots have very few bits).
+(ballots have very voting few bits).
 
 Second, a random symmetric key S is generated and used to encrypt
 the randomized ballot.  Then 10 more random keys K1, ..., K10 are generated
 and used in 5-way Shamir Secret Sharing encryption
 scheme to encrypt S.  The 5-way
 scheme is such that any 5 of the 10 K-keys can decript the encrypted S.
-Then each K-key is encrypted by the public key of one of the 10 M-boxes.
+Then each of the 10 K-keys is encrypted by the public key
+of a different one of the 10 M-boxes.
 
 The encrypted ballot consists of the randomized encrypted ballot proper,
-the encripted key S, and the 10 encrypted K-Keys.  It can be decrypted
+the encripted key S, the 10 encrypted K-Keys, and for
+diagnostic purposes, a copy of the unencrypted, unmarked ballot.  The
+encrypted ballot can be decrypted
 by any 5 M-boxes.  It does \underline{not} contain the voter's ID.
 
 \section{Certificate Details}
