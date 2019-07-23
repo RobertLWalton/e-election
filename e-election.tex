@@ -234,7 +234,7 @@ in public/private pairs.
 Each Registration and Collection
 machine has a URL which serves as its name.
 
-Each Private Voting Machine and each Counting Machine
+Each Private Voting Machine
 has a Unique ID, or UID, which is a 1024 bit random number
 used to identify the machine.  This UID serves as the
 machine's name.
@@ -280,7 +280,7 @@ Machines.
 \item The unmarked ballot.
 \item UIDs and associated public keys of all Private Voting
 Machines.  This includes de-registered and test Private Voting
-Machines, as Registraton Machines do not know which Private Voting
+Machines, as Registration Machines do not know which Private Voting
 Machines are de-registered or test machines.
 \item A log of any transactions the Registration Machine has
 been involved in, including  Certificates issued by the Registration Machine.
@@ -447,11 +447,65 @@ The Collection Machines receive the submitted ballots, each containing
 an encrypted ballot and at least 3 certificates for the encrypted
 ballot.
 
-At the end of voting the Collection Machines communicate with each
-other so all have the same set of submitted ballots.  Then each
-Collection Machine validates the ballots and submits all the
-valid encrypted ballots, but \underline{without} their certificates, to
-each Counting Machine.
+The locked box of a Collection Machine contains:
+\begin{enumerate}
+\item The private key of the Collection Machine.
+\item Public keys of all Registration Machines and all Collection
+Machines.
+\item The unmarked ballot.
+\item UIDs and associated public keys of all Private Voting
+Machines.  This includes de-registered and test Private Voting
+Machines, as Collection Machines do not initially know which Private Voting
+Machines are de-registered or test machines.
+\item The set of all accepted submitted ballots sent to the collection machine
+by Private Voting Machines.
+\end{enumerate}
+
+Collection Machines receive and process two kinds of requests from
+Private Voting Machines:
+\begin{enumerate}
+
+\item
+Ballot Submission.  The Private Voting Machine uses this to sent
+its submitted ballot to the Collection Machine.  The latter accepts
+the submitted ballot if its Registration Machine certificate signatures
+and the enclosed unmarked ballot check, and rejects the submitted
+ballot otherwise.  Note that a message not correctly encrypted with
+the private key of the submitting Private Voting Machine is ignored.
+
+Accepted submitted ballots are added to the locked box of the
+Collection Machine.
+
+\item
+Submission Check.  The Collection Machine sends a reply containing
+the signatures of accepted submitted ballots
+that were sent to the Collection Machine
+by the Private Voting Machine, if any.
+
+\end{enumerate}
+
+At the end of voting Collection Machines are disconnected from
+the internet.  They then
+\begin{enumerate}
+\item Transmit to each other their sets of accepted submitted ballots.
+\item Merge into their own set of accepted submitted ballots any
+received from other Collection Machines that they did not have previously.
+At this point, all Collection Machines have the same set of accepted
+submitted ballots.
+\item Receive from outside the E-Election System a list of de-registered
+and test Private Voting Machines.
+\item Create a set of valid ballots (defined below)
+which are to be submitted to the Counting Machines.
+\item Separated this set of valid ballots into a set of ballot headers
+and a set of encrypted ballots.  The headers of a submitted ballot is
+everything but the encrypted ballot contained therein.  In particular
+the certificates are in the header.
+\item Transfer the set of encrypted ballots to each Counting Machine.
+\end{enumerate}
+
+Since the Collection Machines are disconnected from the internet,
+data transfers are made by copying to and from thumb drives, or by
+a network physically separate from the internet.
 
 A ballot is valid unless:
 
@@ -468,7 +522,7 @@ Note that messages received that cannot be decrypted using the
 private key of the Collection Machine and a public key known
 to the Collection Machine are discarded, and so cannot contain
 ballots that are either valid or invalid.  Collection Machine
-public/private key pairs a election specific, so ballots for
+public/private key pairs are election specific, so ballots for
 the wrong election will not be considered.
 
 \section{Counting Machine Details}
@@ -479,6 +533,12 @@ are the same for each Counting Machine.
 
 Each Counting Machine is then given 5 M-boxes and proceeds to
 decrypt and count the ballots.
+
+The Counting Machine locked box contains nothing but the names
+and public keys of all Collection Machines.
+
+An M-box contains nothing but the number (1 though 10)
+and the private key of the M-box.
 
 \section{De-Registration and Testing}
 
@@ -525,7 +585,41 @@ such easier verification is not significant.
 
 \section{Voter Suppression}
 
+Attempts to suppress votes are more common that attempts to buy votes.
+
+As long as a Private Voting Machine locked box contains almost completely
+correct names and public keys of Registration Machines,
+it should be effectively impossible to suppress the
+Private Voting Machine's vote.  This information is initially delivered
+by the voter registration office of the town registering the voter, when
+the office gives the voter the Private Voting Machine.  The information
+can then be updated by having Registration Machines for a current
+election distribute this information for future elections as part of
+their response to a Request for Ballot.
+
+It would probably be a good idea, however, to have each voter come into
+the voter registration office once every 5 years to get a new
+Private Voting Machine, at which time their old one is de-registered.
+
+
 \section{Deviant Software}
 \label{DEVIANT-SOFTWARE}
+
+Since the software is published and compilers for its tamper-proof
+language are to be readily available, it is easy to make deviant
+versions of the software.
+
+To keep such versions out of the system, the sofware should be
+placed on the same thumb drives as the locked boxes which the
+software will be used with.  In addition signatures of the
+software can be place in the locked boxes, and other independent
+software can be used to open the locked box and validate the
+thumb drive software.
+
+The software on a thumb drive can contain names and public keys of
+servers that have updates for the software, so the software can
+update itself securely.  Of course, before updating the software
+should check multiple servers to be sure they all agree on the
+update.
 
 \end{document}
