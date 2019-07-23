@@ -65,7 +65,7 @@
     % Change notice.
 
 \newcommand{\figref}[1]{\ref{#1}$\,^{p\,\pageref{#1}}$}
-\newcommand{\pagref}[1]{p\pageref{#1}}
+\newcommand{\pagref}[1]{(see page~\pageref{#1} below)}
 \newcommand{\pagnote}[1]{$\,^{p\,\pageref{#1}}$}
 
 \newcommand{\EOL}{\penalty \exhyphenpenalty}
@@ -112,7 +112,7 @@
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}}
 
-\date{July 19, 2019}
+\date{July 23, 2019}
 
 \maketitle
 
@@ -163,13 +163,15 @@ thumb drives containing master lock boxes
 provide decrypted M-Boxes in order to decrypt ballots and
 produce final counts.
 
-Each Machine as a public key and a private key (or in the
-case of a Counting Machine, 10 private keys).  Each precinct
-has its own separate set of Counting Machines and M-Boxes with
-private keys.
+Each Machine and each M-Box as a public key and a private key.
+Each precinct has its own separate set of Counting Machines and M-Boxes with
+private keys, but precincts may share Collection Machines and Registration
+Machines.
 
 Collection Machines, Counting Machines, and M-Boxes may be
-specific to a particular election.
+specific to a particular election, but Private Voting Machines and
+Registration Machine URLs and public keys are shared across
+multiple elections.
 
 \section{Tamper Proof Software}
 
@@ -225,7 +227,7 @@ tend to make the passkey easier to type.
 Each machine has a locked box.  Each Counting
 Machine has 10 additional locked M-Boxes.
 
-Each machine has a public key and a private key.  These
+Each machine and each M-Box has a public key and a private key.  These
 are long, e.g. 4,096 bit, values constructed randomly
 in public/private pairs.
 
@@ -237,20 +239,38 @@ has a Unique ID, or UID, which is a 1024 bit random number
 used to identify the machine.  This UID serves as the
 machine's name.
 
+The correspondence between Private Voting Machine UIDs
+and voter names and addresses is not part of the E-Election system
+described here.  The E-Election system only knows about
+Private Voting Machines identified by their UIDs.
+Generally this correspondence would only be made available
+to organizations and people authorized by state law.
+For example, Massachusetts currently makes voter registration lists
+available to registered political parties.
+
 When one machine sends a message to another, the sender
 encrypts the message proper with the sender's private
 key, and attaches the unencrypted sender's name to the
 message.  The receiver is expected to have the public
-key of the sender.  Thus public keys are not published,
+key of the sender.  Public keys are not published,
 though the system is designed so that publishing public
-keys will not compromise security or essentual privacy.
+keys will not compromise security or essentual privacy,
+and voters can find out the public keys of Registration
+Machines and Collection Machines by examining their
+decrypted PVM Lock Box using deviant software
+\pagref{DEVIANT-SOFTWARE}.
 
 \section{Registration Machine Details}
 
 A Registration Machine is run by a single election official
-who holds registration card containing the the passkey to
-the machine's locked box.  The
-locked box contains:
+who holds the registration card containing the the passkey to
+the machine's locked box.  The Registration Machine in this
+sense is specific to a particular election, but the
+URL naming the Registration Machine and the machine's
+public/private key pair will typically remain the same from
+one election to the next.
+
+The locked box of a Registration Machine contains:
 \begin{enumerate}
 \item The private key of the Registration Machine.
 \item Public keys of all Registration Machines, all Collection
@@ -258,11 +278,16 @@ Machines, and all Counting M-Boxes.
 \item Machine names (URLs) of other Registration Machines and all Collection
 Machines.
 \item The unmarked ballot.
-\item UIDs and associated public keys of all registered Private Voting
-Machines.
+\item UIDs and associated public keys of all Private Voting
+Machines.  This includes de-registered and test Private Voting
+Machines, as Registraton Machines do not know which Private Voting
+Machines are de-registered or test machines.
 \item A log of any transactions the Registration Machine has
-been involved in.  The Certificates issued by the Registration Machine
-are included in its log.
+been involved in, including  Certificates issued by the Registration Machine.
+This log is public, and allows the public to determine which Private
+Voting Machines have voted and when they have voted, though here the
+Private Voting Machines are identified by their UID and not by the
+name/address of their voter.
 \end{enumerate}
 
 A Registration Machine receives two kinds of requests from
@@ -288,18 +313,21 @@ and a signature of the certificate by the Registation Machine.
 Requesters are always Private Voting Machines, and all replies
 are sent to just the requester.
 
-A Registration Machine also permits the public to view online
-its log and all data except the Registration Machine's
-private key and the public keys of other machines.
-The voting list, which associates each Private
-Voting Machine public key with a voter name, address, sex,
-age, etc., is \underline{not} part of this electronic
-election system (but might be in an adjunct to this system).
-
 A Registration Machine may serve requests from more than
 one precinct, but the information flow remains specific
 to the precinct.  Each precinct should have at least 3
 Registration Machines available.
+
+In order to change Registration Machine URLs and public keys
+periodically, a Registration Machine may include
+in its Request for Ballot response
+URLs and public keys that are to be use after a specified date.
+Note that Private Voting Machines do not know the date and time,
+unless informed of such by a Registration Machine or the voter,
+so if a Private Voting Machine has information 
+to be used after a specific date, the Private Voting Machine
+will have to ask the voter for the current date.
+
 
 \section{Private Voting Machine Details}
 
@@ -416,9 +444,9 @@ A ballot is valid unless:
 \item It has been superceded by a later ballot from the same
 Private Voting Machine.
 \item It is from a Private Voting Machine that has been de-registered
-(see below).
+\pagref{DE-REGISTERED}.
 \item It is from a test Private Voting Machine that is
-being used as a system/hardware tester (see below).
+being used as a system/hardware tester \pagref{TESTER}.
 \end{enumerate}
 
 Note that messages received that cannot be decrypted using the
@@ -440,10 +468,12 @@ decrypt and count the ballots.
 \section{De-Registration and Testing}
 
 If a Private Voting Machine (i.e., its thumb drive and registration
-card) is lost or stolen, the voter may have the machine de-registered
+card) is lost or stolen, the voter may have the machine
+de-registered\label{DE-REGISTERED}
 and replaced by a new Private Voting Machine.
 
-Some Private Voting Machines are used for system/hardware testing.
+Some Private Voting Machines are used as `testers'\label{TESTER} for
+system software and hardware.
 These are used by election officials to cast known votes that can
 be checked to ensure that the system and hardware is working as
 desired.
@@ -477,5 +507,10 @@ is what the buyer wants it to be.  The E-Election
 System shares this with absentee voting systems.  However, since its
 nearly impossible to buy large numbers of votes without being detected,
 such easier verification is not significant.
+
+\section{Voter Suppression}
+
+\section{Deviant Software}
+\label{DEVIANT-SOFTWARE}
 
 \end{document}
