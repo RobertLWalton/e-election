@@ -333,12 +333,16 @@ will have to ask the voter for the current date.
 
 A Private Voting Machine is run by a single voter
 who holds the registration card containing the passkey to
-the machine's locked box.
+the machine's locked box.  Usually a Private Voting Machine
+is used by its voter for multiple elections over a period
+of several years, after which the Private Voting Machine
+is de-registered and a new Private Voting Machine
+is given to the voter.
 
-Initially the locked box contains:
+Initially the locked box of a Private Voting Machine contains:
 \newcounter{PVM-COUNTER}
 \begin{enumerate}
-\item UID of the Private Voting Machine.
+\item The UID of the Private Voting Machine.
 \item The public and private key of the Private Voting Machine.
 \item Public keys of some Registration Machines.
 \item Machine names (URLs) of some Registration Machines.
@@ -348,10 +352,10 @@ Initially the locked box contains:
 The Private Voting Machine
 makes requests of Registration Machines.  In every case
 at least 3 Registration Machines should be used and the
-results compared or tabulated to avoid single point failures.
+results compared or tabulated to avoid single point failures or corruption.
 
 The first thing a Private Voting Machine does, when prompted by
-its voter, is make a Request for Ballot, and use the replies to
+its voter, is make a Request for Ballot and use the replies to
 add to its locked box the following information:
 \begin{enumerate}
 \setcounter{enumi}{\value{PVM-COUNTER}}
@@ -377,9 +381,19 @@ are signed by the Registration Machines but are \underline{not} encrypted.
 The certificates are copied to the Registration Machine log, and can be
 be viewed by the public.
 
-The submitted ballot, containing the encrypted ballot and
-at least three signatures, is now sent by the Private Voting
-Machine to at least three Collection Machines.
+The submitted ballot is now sent by the Private Voting
+Machine to at least three Collection Machines.  The submitted
+ballot contains:
+\begin{enumerate}
+\item The encrypted ballot.
+\item Certificates received for the encrypted ballot.  These contain the
+UID of the Private Voting Machine.
+\item A copy of the unencrypted \underline{unmarked} ballot, for
+diagnostic purposes.
+\item Version number of the Private Voting Machine software, for
+diagnostic purposes.
+\end{enumerate}
+
 
 A voter may change her/his mind and revote.  The last ballot
 he/she casts counts.  This is rather important in an election,
@@ -401,7 +415,7 @@ Second, a random symmetric key S is generated and used to encrypt
 the randomized ballot.  Then 10 more random keys K1, ..., K10 are generated
 and used in 5-way Shamir Secret Sharing encryption
 scheme to encrypt S.  The 5-way
-scheme is such that any 5 of the 10 K-keys can decript the encrypted S.
+scheme is such that any 5 of the 10 K-keys can decrypt the encrypted S.
 Then each of the 10 K-keys is encrypted by the public key
 of a different one of the 10 M-boxes.
 
@@ -419,11 +433,12 @@ contains:
 \begin{enumerate}
 \item UID of Private Voting Machine submitting the encrypted ballot.
 \item Signature of the encrypted ballot as computed by the
-      Private Voting Machine.
+      Private Voting Machine.  The encrypted ballot itself is
+      \underline{never} sent to the Registration Machine.
 \item Date and time, as computed by the Registration Machine.
-\item Information for system debugging, such as the version ID of the
-      Private Voting Machine software and the URL of the Registration
-      Machine.
+\item Name of the Registration Machine.
+\item Signature of the certificate computed using the private key of
+the Registration Machine.
 \end{enumerate}
 
 \section{Collection Machine Details}
