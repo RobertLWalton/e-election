@@ -112,7 +112,7 @@
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}}
 
-\date{July 23, 2019}
+\date{July 28, 2019}
 
 \maketitle
 
@@ -157,9 +157,10 @@ finished ballots; and the Counting Machines that count the
 ballots.  Each machine has the same design as the PVM, except
 these other machines are each run by an election official, and
 each are replicated with different officials running different
-replicas.  Each Counting Machine also uses separate
+replicas.  Counting Machines also use separate
 thumb drives containing master lock boxes
-(M-Boxes), and requires 5 out of 10 election officials to cooperatively
+(M-Boxes), and a Counting Machine requires
+5 out of 10 election officials to cooperatively
 provide decrypted M-Boxes in order to decrypt ballots and
 produce final counts.
 
@@ -168,10 +169,10 @@ Each precinct has its own separate set of Counting Machines and M-Boxes with
 private keys, but precincts may share Collection Machines and Registration
 Machines.
 
-Collection Machines, Counting Machines, and M-Boxes may be
+Registration Machines, Collection Machines,
+Counting Machines, and M-Boxes may be
 specific to a particular election, but Private Voting Machines and
-Registration Machine URLs and public keys are shared across
-multiple elections.
+their public keys are shared across multiple elections.
 
 \section{Tamper Proof Software}
 
@@ -224,41 +225,46 @@ digits, so this example is the equivalent of 15 random
 digits, but the pseudo-words if chosen to be pronouncable
 tend to make the passkey easier to type.
 
-Each machine has a locked box.  Each Counting
-Machine has 10 additional locked M-Boxes.
+Each machine has a locked box.  Each precinct
+has 10 additional locked M-Boxes.
 
 Each machine and each M-Box has a public key and a private key.  These
 are long, e.g. 4,096 bit, values constructed randomly
 in public/private pairs.
 
-Each Registration and Collection
-machine has a URL which serves as its name.
-
-Each Private Voting Machine
+Each Machine
 has a Unique ID, or UID, which is a 1024 bit random number
 used to identify the machine.  This UID serves as the
 machine's name.
+
+Each M-box for a precinct and election has a number from 1 though 10.
+
+Each Registration and Collection
+machine has a URL.
 
 The correspondence between Private Voting Machine UIDs
 and voter names and addresses is not part of the E-Election system
 described here.  The E-Election system only knows about
 Private Voting Machines identified by their UIDs.
-Generally this correspondence would only be made available
+Generally the correspondence between UIDs and voter names and addresses
+would only be made available
 to organizations and people authorized by state law.
 For example, Massachusetts currently makes voter registration lists
 available to registered political parties.
 
 When one machine sends a message to another, the sender
 encrypts the message proper with the sender's private
-key, and attaches the unencrypted sender's name to the
-message.  The receiver is expected to have the public
-key of the sender.  Public keys are not published,
+key, and attaches the unencrypted sender's UID to the
+message.  Then the sender encrypts the message with the
+reciever's public key.  The sender must have the reciever's
+public key, and the receiver must have the sender's public
+key.  Public keys are not published,
 though the system is designed so that publishing public
 keys will not compromise security or essentual privacy,
-and voters can find out the public keys of Registration
-Machines and Collection Machines by examining their
-decrypted PVM Lock Box using deviant software
-\pagref{DEVIANT-SOFTWARE}.
+and a voter can find out the public keys of Registration
+Machines and Collection Machines by examining his/her locked
+box using deviant software to decrypt and
+display the locaked box \pagref{DEVIANT-SOFTWARE}.
 
 \section{Registration Machine Details}
 
@@ -274,8 +280,8 @@ The locked box of a Registration Machine contains:
 \begin{enumerate}
 \item The private key of the Registration Machine.
 \item Public keys of all Registration Machines, all Collection
-Machines, and all Counting M-Boxes.
-\item Machine names (URLs) of other Registration Machines and all Collection
+Machines, and all M-Boxes.
+\item Machine UIDs and URLs of all Registration Machines and all Collection
 Machines.
 \item The unmarked ballot.
 \item UIDs and associated public keys of all Private Voting
@@ -288,9 +294,15 @@ This log is public, and allows the public to determine which Private
 Voting Machines have voted and when they have voted, though here the
 Private Voting Machines are identified by their UID and not by the
 name/address of their voter.
+\item Information about Private Voting Machine Software, including
+complete copies of recent versions, and version numbers and signatures of both
+recent and deprecated versions.
+\item UIDs, URLs, and public keys of Registration Machines that will be used
+in future elections and Registration Machines that were used in previous
+elections and have been removed from service.
 \end{enumerate}
 
-A Registration Machine receives two kinds of requests from
+A Registration Machine receives four kinds of requests from
 Private Voting Machines:
 \begin{enumerate}
 
@@ -301,6 +313,16 @@ Collection Machines known to the Registration Machine,
 and also the public keys of any M-Boxes known to the Registration
 Machine.
 
+The reply also contains version numbers and signatures of Private
+Voting Machine software known to the Registration Machine, and
+the status of each version, active or deprecated.
+
+The reply further contains the UIDs, URLs, and public keys of
+Registration Machines not being used in the current election,
+either because they have been removed from service or because
+they will be used in a future election.  The status of each such
+machine is included.
+
 \item
 Request for Certificate.  The request includes the signature
 of an encrypted ballot prepared by the requesting Private
@@ -308,26 +330,34 @@ Voting Machine.  The reply is a certificate containing
 the signature, the Private Voting Machine's UID,
 and a signature of the certificate by the Registation Machine.
 
+\item
+Request for Log.  The log entries created by requests from the
+requesting Private Voting Machine are returned in the reply.
+
+\item
+Request for Software.  The version of Private Voting Machine software
+requested in returned in the reply.\footnote{It may be necessary to
+modularize the software so that individual device drivers and
+the election software proper are separate modules.  Given this no module
+should be more than several megabytes in size.  If devices are sufficiently
+standardized this will not be necessary.}
+
 \end{enumerate}
 
 Requesters are always Private Voting Machines, and all replies
-are sent to just the requester.
+are sent to just the requester.  All requests are logged.
 
 A Registration Machine may serve requests from more than
-one precinct, but the information flow remains specific
+one precinct, but the election information flow remains specific
 to the precinct.  Each precinct should have at least 3
 Registration Machines available.
 
-In order to change Registration Machine URLs and public keys
-periodically, a Registration Machine may include
-in its Request for Ballot response
-URLs and public keys that are to be use after a specified date.
-Note that Private Voting Machines do not know the date and time,
-unless informed of such by a Registration Machine or the voter,
-so if a Private Voting Machine has information 
-to be used after a specific date, the Private Voting Machine
-will have to ask the voter for the current date.
-
+Note that Private Voting Machines have no concept of time.
+If they cannot contact Registation Machines used in the last
+election, they will try to contact Registration Machines
+slated for use in future elections, and if successful, will
+update their locked box according the Request for Ballot
+replies of these Registration Machines.
 
 \section{Private Voting Machine Details}
 
@@ -344,8 +374,9 @@ Initially the locked box of a Private Voting Machine contains:
 \begin{enumerate}
 \item The UID of the Private Voting Machine.
 \item The public and private key of the Private Voting Machine.
-\item Public keys of some Registration Machines.
-\item Machine names (URLs) of some Registration Machines.
+\item Public keys, UIDs, URLs, and status of some Registration Machines.
+\item Version number and signature of Private Voting Machine's current
+      software.
 \setcounter{PVM-COUNTER}{\value{enumi}}
 \end{enumerate}
 
@@ -359,24 +390,33 @@ its voter, is make a Request for Ballot and use the replies to
 add to its locked box the following information:
 \begin{enumerate}
 \setcounter{enumi}{\value{PVM-COUNTER}}
-\item Public keys of all Registration Machines, all Collection
-Machines, and all Counting M-Boxes.
-\item Machine names (URLs) of all Registration Machines and all Collection
-Machines.
+\item URLs, public keys, and UIDs
+of all Registration Machines and all Collection
+Machines used in the current election.
+\item Public keys the M-Boxes used in the current election.
 \item The unmarked ballot.
+\item UIDs, public keys, and URLs of Registration Machines that are
+obsolete or will be used in future elections.
+\item Version numbers and signatures of different sofware versions
+known to the Registration Machines.
 \end{enumerate}
 This can be done days or just minutes before the voter votes.
 
+At this point
+the voter may or may not choose to update Private Voting Machine
+software using a Request for Sofware made to the Registration Machines.
+
 The next step is for the voter to vote by marking the ballot.
 
-Next the ballot is encrypted and certified.  Encryption of the
+After it is marked the ballot is encrypted and certified.  Encryption of the
 ballot is described below.  To certify the ballot, a signature
 is computed of the encrypted ballot, and the signature is sent
 in a Request to Certify message to each of at least three Registration
 Machines.  These in turn send back certificates that are appended
 to the encrypted ballot to form the submitted ballot.  Each
 certificate contains the signature of the encrypted ballot, the
-UID of the Private Voting Machine, and a time stamp.  The certificates
+UIDs of the Private Voting Machine and Registration Machine,
+and a time stamp.  The certificates
 are signed by the Registration Machines but are \underline{not} encrypted.
 The certificates are copied to the Registration Machine log, and can be
 be viewed by the public.
@@ -386,8 +426,8 @@ Machine to at least three Collection Machines.  The submitted
 ballot contains:
 \begin{enumerate}
 \item The encrypted ballot.
-\item Certificates received for the encrypted ballot.  These contain the
-UID of the Private Voting Machine.
+\item Certificates received for the encrypted ballot.  Each contains the
+UIDs of the Private Voting Machine and certifying Registation Machine.
 \item A copy of the unencrypted \underline{unmarked} ballot, for
 diagnostic purposes.
 \item Version number of the Private Voting Machine software, for
@@ -395,7 +435,7 @@ diagnostic purposes.
 \end{enumerate}
 
 
-A voter may change her/his mind and revote.  The last ballot
+A voter may change her/his mind and re-vote.  The last ballot
 he/she casts counts.  This is rather important in an election,
 as on the one hand a voter may receive new information and
 want to change the vote, and on the other hand to avoid system
@@ -431,12 +471,12 @@ For each encrypted ballot, several certificates are generated
 by Registration Machines acting independently.  Each certificate
 contains:
 \begin{enumerate}
-\item UID of Private Voting Machine submitting the encrypted ballot.
+\item UID of the Private Voting Machine submitting the encrypted ballot.
+\item UID of the Registration Machine certifying the ballot.
+\item Date and time, as computed by the Registration Machine.
 \item Signature of the encrypted ballot as computed by the
       Private Voting Machine.  The encrypted ballot itself is
       \underline{never} sent to the Registration Machine.
-\item Date and time, as computed by the Registration Machine.
-\item Name of the Registration Machine.
 \item Signature of the certificate computed using the private key of
 the Registration Machine.
 \end{enumerate}
@@ -450,7 +490,7 @@ ballot.
 The locked box of a Collection Machine contains:
 \begin{enumerate}
 \item The private key of the Collection Machine.
-\item Public keys of all Registration Machines and all Collection
+\item Public keys and UIDs of all Registration Machines and all Collection
 Machines.
 \item The unmarked ballot.
 \item UIDs and associated public keys of all Private Voting
@@ -478,7 +518,7 @@ Collection Machine.
 
 \item
 Submission Check.  The Collection Machine sends a reply containing
-the signatures of accepted submitted ballots
+the certificates of accepted submitted ballots
 that were sent to the Collection Machine
 by the Private Voting Machine, if any.
 
@@ -497,7 +537,7 @@ and test Private Voting Machines.
 \item Create a set of valid ballots (defined below)
 which are to be submitted to the Counting Machines.
 \item Separated this set of valid ballots into a set of ballot headers
-and a set of encrypted ballots.  The headers of a submitted ballot is
+and a set of encrypted ballots.  The header of a submitted ballot is
 everything but the encrypted ballot contained therein.  In particular
 the certificates are in the header.
 \item Transfer the set of encrypted ballots to each Counting Machine.
@@ -519,8 +559,8 @@ being used as a system/hardware tester \pagref{TESTER}.
 \end{enumerate}
 
 Note that messages received that cannot be decrypted using the
-private key of the Collection Machine and a public key known
-to the Collection Machine are discarded, and so cannot contain
+private key of the Collection Machine
+are discarded, and so cannot contain
 ballots that are either valid or invalid.  Collection Machine
 public/private key pairs are election specific, so ballots for
 the wrong election will not be considered.
@@ -534,18 +574,26 @@ are the same for each Counting Machine.
 Each Counting Machine is then given 5 M-boxes and proceeds to
 decrypt and count the ballots.
 
-The Counting Machine locked box contains nothing but the names
-and public keys of all Collection Machines.
+The Counting Machine locked box contains nothing but the UIDs
+and public keys of all Collection Machines, and a log of all
+the final results (including recounts).
 
-An M-box contains nothing but the number (1 though 10)
+An M-box contains nothing but its number (1 though 10)
 and the private key of the M-box.
 
-\section{De-Registration and Testing}
+Write-ins can be tabulated by the Counting Machines in a manner
+generally similar to regular votes.  A write-in is a piece of
+text, and counts can be given each piece of text and for groups
+of similar pieces of text.
+
+\section{De-Registration}
 
 If a Private Voting Machine (i.e., its thumb drive and registration
 card) is lost or stolen, the voter may have the machine
 de-registered\label{DE-REGISTERED}
 and replaced by a new Private Voting Machine.
+
+\section{Testing}
 
 Some Private Voting Machines are used as `testers'\label{TESTER} for
 system software and hardware.
@@ -553,22 +601,28 @@ These are used by election officials to cast known votes that can
 be checked to ensure that the system and hardware is working as
 desired.
 
-To check test votes, the encrypted ballots are submitted to a Test
-Machine not otherwise mentioned which is given 5 M-boxes and
-decrypts the ballots so they can be compared with hand written
-notes taken by the election officials that cast the ballots.
-The system does not know which Private Voting Machines are test
-machines until after voting ends and the Collection Machines
-are given this information.
+To check test votes, a test-re-count is conducted in which
+the Collection Machines are told that the test Private Voting
+Machines are valid: i.e., not test and not de-registered.  The
+test recount should produces counts whose difference exactly
+equals the votes of the test machines, which can be recorded on
+paper when the test administrators use them to vote.  If there
+is a slight mismatch, the test ballots can be counted by themselves
+by the Collection/Counting machines.  Furthermore, a Counting Machine
+can display a ballot, since all association with a voter has been
+removed, so the test ballots can be displayed if necessary to
+resolve discrepancies introduces by minor election official error.
 
-The hardware used to run test PVMs should be of kinds randomly
-choosen from the kinds of hardware used by voters, so that if a
+The testing procedure involves running Machines on the same kinds
+of hardware that would be used in non-test voting and counting,
+in a way that the software and hardware of these machines has no
+way of knowing that they are being run as tests.  In particular, if a
 hardware manufacturer is producing hacked hardware that corrupts
-ballots, this will be eventually detected.
+ballots or counting, this will be eventually detected.
 
 \section{Vote Buying}
 
-No voting system prevents a person to knows a voter well from
+No voting system prevents a person who knows a voter well from
 `buying' the voter's vote with some favor.
 
 However buying votes on a large enough scale to influence elections
@@ -587,16 +641,8 @@ such easier verification is not significant.
 
 Attempts to suppress votes are more common that attempts to buy votes.
 
-As long as a Private Voting Machine locked box contains almost completely
-correct names and public keys of Registration Machines,
-it should be effectively impossible to suppress the
-Private Voting Machine's vote.  This information is initially delivered
-by the voter registration office of the town registering the voter, when
-the office gives the voter the Private Voting Machine.  The information
-can then be updated by having Registration Machines for a current
-election distribute this information for future elections as part of
-their response to a Request for Ballot.
-
+Using Registration Machines to distribute updates for Registration
+Machine lists and software should make voter suppression very difficult.
 It would probably be a good idea, however, to have each voter come into
 the voter registration office once every 5 years to get a new
 Private Voting Machine, at which time their old one is de-registered.
@@ -616,10 +662,8 @@ software can be place in the locked boxes, and other independent
 software can be used to open the locked box and validate the
 thumb drive software.
 
-The software on a thumb drive can contain names and public keys of
-servers that have updates for the software, so the software can
-update itself securely.  Of course, before updating the software
-should check multiple servers to be sure they all agree on the
-update.
+Using duplicated Registration Machines to distribute software updates should
+make if nearly impossible for hackers
+to introduce deviant software on a large scale.
 
 \end{document}
