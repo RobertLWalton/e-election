@@ -112,7 +112,7 @@
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}}
 
-\date{July 28, 2019}
+\date{August 3, 2019}
 
 \maketitle
 
@@ -128,7 +128,7 @@ to the public.}}
 
 \section{Introduction}
 
-Our purpose is to specify an all-electronic election system
+Our purpose is to specify an all-electronic election E-Election System
 suitable for replacing the current optical paper system
 used in Massachusetts.  Our system is based on the notion
 of `tamper proof software', which is software that is
@@ -155,8 +155,9 @@ ready-to-mark ballots available and time-stamp and certify
 encrypted finished ballots; the Collection Machines that collect
 finished ballots; and the Counting Machines that count the
 ballots.  Each machine has the same design as the PVM, except
-these other machines are each run by an election official, and
-each are replicated with different officials running different
+these other machines have different software,
+are each run by a single election official instead of a voter, and
+are replicated with different officials running different
 replicas.  Counting Machines also use separate
 thumb drives containing master lock boxes
 (M-Boxes), and a Counting Machine requires
@@ -164,15 +165,31 @@ thumb drives containing master lock boxes
 provide decrypted M-Boxes in order to decrypt ballots and
 produce final counts.
 
-Each Machine and each M-Box as a public key and a private key.
-Each precinct has its own separate set of Counting Machines and M-Boxes with
-private keys, but precincts may share Collection Machines and Registration
+Each Machine and each M-Box has a public key and a private key.
+Each precinct has its own separate set of Counting Machines and M-Boxes,
+but precincts may share Collection Machines and Registration
 Machines.
 
-Registration Machines, Collection Machines,
+Collection Machines,
 Counting Machines, and M-Boxes may be
-specific to a particular election, but Private Voting Machines and
+specific to a particular election, but Registration Machines
+and Private Voting Machines and
 their public keys are shared across multiple elections.
+
+\section{Advantages}
+
+The main advantages of the E-Election System are:
+\begin{enumerate}
+\item Substantially reduced election staff manpower.
+\item Substantially decreased cost of running an election.
+\item Substantially increased ease of voting.
+\end{enumerate}
+
+Hopefully these advantages will eventually lead to
+greater voter turnout and more frequent use of elections such
+as referendums to let the voters decide issues directly
+(as is done in Switzerland).
+
 
 \section{Tamper Proof Software}
 
@@ -213,6 +230,37 @@ for most of the code, and can be machine independent.
 A few functions can be optimized by being written in assembly
 language.
 
+\section{Software Distribution}
+
+In addition to producing binaries that can be trusted, one
+must distribute them.  The software for one of the E-Election
+System machines will be a set of read-only files, one of which will be
+the boot file that runs during startup.
+
+The files and the
+and their cryptographic signatures will be available on multiple
+web sites.  Only the signature of the boot file needs to be checked,
+as it will contain signatures of the other files and will check
+the other files before they are used in running the machine.
+Widely available commodity software running under commodity operating systems
+can be used to check the signature of the boot file.
+
+To avoid hacking by commodity software during a signature check,
+the E-Election Machine thumb drive should have a physical read-only
+switch.
+
+The software files will be on
+the same thumb drive as their associated machine's locked box, and
+therefore cannot be substituted by switching thumb drives.
+
+Private Voting Machines would be created by the town clerk.
+Software updates for the Private Voting Machines are distributed
+by the Registration Machines.  Therefore Private Voting Machines
+would only need to have their file signatures checked if the voter
+suspected that someone physically tampered with the machine's thumb drive.
+
+
+
 \section{Keys and Names}
 
 Each locked box in the system has a passkey, which is
@@ -231,6 +279,8 @@ has 10 additional locked M-Boxes.
 Each machine and each M-Box has a public key and a private key.  These
 are long, e.g. 4,096 bit, values constructed randomly
 in public/private pairs.
+These are \underline{not} the same as the passkey of any locked box.
+Passkeys are symmetric encryption keys.
 
 Each Machine
 has a Unique ID, or UID, which is a 1024 bit random number
@@ -239,8 +289,7 @@ machine's name.
 
 Each M-box for a precinct and election has a number from 1 though 10.
 
-Each Registration and Collection
-machine has a URL.
+Each Registration and Collection Machine has a URL.
 
 The correspondence between Private Voting Machine UIDs
 and voter names and addresses is not part of the E-Election system
@@ -264,7 +313,11 @@ keys will not compromise security or essentual privacy,
 and a voter can find out the public keys of Registration
 Machines and Collection Machines by examining his/her locked
 box using deviant software to decrypt and
-display the locaked box \pagref{DEVIANT-SOFTWARE}.
+display the locked box \pagref{DEVIANT-SOFTWARE}.
+
+Note that Counting Machines are never given Private Voting
+Machine UIDs or public keys, and can never associate an
+encrypted ballot with a particular Private Voting Machine.
 
 \section{Registration Machine Details}
 
@@ -273,8 +326,8 @@ who holds the registration card containing the the passkey to
 the machine's locked box.  The Registration Machine in this
 sense is specific to a particular election, but the
 URL naming the Registration Machine and the machine's
-public/private key pair will typically remain the same from
-one election to the next.
+public/private key pair will typically remain the same across
+several elections.
 
 The locked box of a Registration Machine contains:
 \begin{enumerate}
@@ -290,10 +343,15 @@ Machines, as Registration Machines do not know which Private Voting
 Machines are de-registered or test machines.
 \item A log of any transactions the Registration Machine has
 been involved in, including  Certificates issued by the Registration Machine.
-This log is public, and allows the public to determine which Private
-Voting Machines have voted and when they have voted, though here the
 Private Voting Machines are identified by their UID and not by the
 name/address of their voter.
+
+During the election the portion of the log involving transactions with
+a particular Private Voting Machine is visible to that Private Voting
+Machine.  \underline{After} the election the entire log will be available to
+to the public under the same terms as voter registration lists are
+available (e.g., in Massachusetts they are available to registered
+political parties).
 \item Information about Private Voting Machine Software, including
 complete copies of recent versions, and version numbers and signatures of both
 recent and deprecated versions.
