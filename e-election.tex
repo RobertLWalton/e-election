@@ -574,7 +574,7 @@ ballot.
 
 The locked box of a Collection Machine initially contains:
 \begin{enumerate}
-\newcounter{CM-COUNTER}
+\newcounter{CML-COUNTER}
 \item The private key of the Collection Machine.
 \item Public keys and UIDs of all Registration Machines.
 \item The unmarked ballot.
@@ -582,7 +582,7 @@ The locked box of a Collection Machine initially contains:
 Machines.  This includes de-registered and test Private Voting
 Machines, as Collection Machines do not initially know which Private Voting
 Machines are de-registered or test machines.
-\setcounter{CM-COUNTER}{\value{enumi}}
+\setcounter{CML-COUNTER}{\value{enumi}}
 \end{enumerate}
 
 During voting the collection machines may receive updates to the
@@ -591,9 +591,10 @@ receive submitted ballots.  The later cause the following to be
 added to the Collection Machine locked box:
 
 \begin{enumerate}
-\setcounter{enumi}{\value{PVM-COUNTER}}
+\setcounter{enumi}{\value{CML-COUNTER}}
 \item The set of all accepted submitted ballots sent to the collection machine
 by Private Voting Machines.
+\setcounter{CML-COUNTER}{\value{enumi}}
 \end{enumerate}
 
 Collection Machines receive and process two kinds of requests from
@@ -621,16 +622,41 @@ by the Private Voting Machine, if any.
 
 \end{enumerate}
 
+Note that messages received that cannot be decrypted using the
+private key of the Collection Machine
+are discarded, and so cannot contain
+ballots that are either valid or invalid.  Collection Machine
+public/private key pairs are election specific, so ballots for
+the wrong election will not be considered.
+
 At the end of voting Collection Machines are disconnected from
 the internet.  They then
 \begin{enumerate}
+\newcounter{CMC-COUNTER}
+\item Receive the UIDs and public keys of all Collection Machines and
+Counting Machines.
 \item Transmit to each other their sets of accepted submitted ballots.
 \item Merge into their own set of accepted submitted ballots any
 received from other Collection Machines that they did not have previously.
 At this point, all Collection Machines have the same set of accepted
 submitted ballots.
-\item Receive from outside the E-Election System a list of de-registered
-and test Private Voting Machines.
+\setcounter{CMC-COUNTER}{\value{enumi}}
+\end{enumerate}
+
+Lastly, Collection Machines participate with Counting Machines to
+produce vote counts.  More than one vote count will be produced:
+e.g., a count of initial valid votes, a re-count that includes
+allowed provisional votes, a re-count that includes test votes.
+The Collection Machine's job is to prepare for each vote count
+the set of valid ballots and submit this set to the Counting Machines.
+To do this the Collection Machines:
+
+\begin{enumerate}
+\setcounter{enumi}{\value{CMC-COUNTER}}
+\item Receive from outside the E-Election System a list of UIDs of
+Private Voting Machines that are valid for the vote count.
+E.g., for the initial vote count a Private Voting Machine would
+be valid unless it is de-registered, provisional, or a test machine.
 \item Create a set of valid ballots (defined below)
 which are to be submitted to the Counting Machines.
 \item Separated this set of valid ballots into a set of ballot headers
@@ -649,34 +675,46 @@ A ballot is valid unless:
 \begin{enumerate}
 \item It has been superceded by a later ballot from the same
 Private Voting Machine.
-\item It is from a Private Voting Machine that has been de-registered
-\pagref{DE-REGISTERED}.
-\item It is from a test Private Voting Machine that is
-being used as a system/hardware tester \pagref{TESTER}.
+\item It is from a Private Voting Machine that is not valid.
 \end{enumerate}
 
-Note that messages received that cannot be decrypted using the
-private key of the Collection Machine
-are discarded, and so cannot contain
-ballots that are either valid or invalid.  Collection Machine
-public/private key pairs are election specific, so ballots for
-the wrong election will not be considered.
+During after-voting processing the following are added to each
+Collection Machine Locked box:
+
+\begin{enumerate}
+\setcounter{enumi}{\value{CML-COUNTER}}
+\item The UIDs and public keys of all other Collection Machines.
+\item The UIDs and public keys of all Counting Machines.
+\item For each count:
+\begin{enumerate}
+\item Set of UIDs of valid Private Voting Machines.
+\item Sorted set of valid ballots.
+\item Sorted set of valid ballot headers.
+\item Sorted set of valid encrypted ballots.
+\end{enumerate}
+\end{enumerate}
 
 \section{Counting Machine Details}
 
-Counting Machines recieve a complete set of encrypted ballots
+Counting is done separately for each vote count.
+
+Counting Machines recieve a complete sorted set of encrypted ballots
 from each collection machine, and check to be sure these sets
-are the same for each Counting Machine.
+are the same.  Using cryptographic hashes of the sets, the Counting
+Machines check that each Counting Machine has received the same set.
 
 Each Counting Machine is then given 5 M-boxes and proceeds to
-decrypt and count the ballots.
-
-The Counting Machine locked box contains nothing but the UIDs
-and public keys of all Collection Machines, and a log of all
-the final results (including recounts).
+decrypt and count the ballots.  The Counting Machines then compare
+the counts to verify that all Counting Machines go the same counts.
 
 An M-box contains nothing but its number (1 though 10)
 and the private key of the M-box.
+
+The Counting Machine locked box contains nothing but the UIDs
+and public keys of all Collection Machines and Counting Machines,
+and a log of all
+the vote counts.  It does not contain encrypted ballots, but does
+contain within the log cryptographic hashes of encrypted ballot sets.
 
 Write-ins can be tabulated by the Counting Machines in a manner
 generally similar to regular votes.  A write-in is a piece of
