@@ -238,14 +238,14 @@ System machines will be a set of read-only files, one of which will be
 the boot file that runs during startup.
 
 The files and the
-and their cryptographic signatures will be available on multiple
-web sites.  Only the signature of the boot file needs to be checked,
-as it will contain signatures of the other files and will check
+and their cryptographic hashs (e.g., SHA-256) will be available on multiple
+web sites.  Only the cryptographic hash of the boot file needs to be checked,
+as it will contain cryptographic hashes of the other files and will check
 the other files before they are used in running the machine.
 Widely available commodity software running under commodity operating systems
-can be used to check the signature of the boot file.
+can be used to check the cryptographic hash of the boot file.
 
-To avoid hacking by commodity software during a signature check,
+To avoid hacking by commodity software during a cryptographic hash check,
 the E-Election Machine thumb drive should have a physical read-only
 switch.
 
@@ -256,7 +256,7 @@ therefore cannot be substituted by switching thumb drives.
 Private Voting Machines would be created by the town clerk.
 Software updates for the Private Voting Machines are distributed
 by the Registration Machines.  Therefore Private Voting Machines
-would only need to have their file signatures checked if the voter
+would only need to have their file cryptographic hashes checked if the voter
 suspected that someone physically tampered with the machine's thumb drive.
 
 
@@ -353,8 +353,8 @@ to the public under the same terms as voter registration lists are
 available (e.g., in Massachusetts they are available to registered
 political parties).
 \item Information about Private Voting Machine Software, including
-complete copies of recent versions, and version numbers and signatures of both
-recent and deprecated versions.
+complete copies of recent versions, and version numbers and
+cryptographic hashes of both recent and deprecated versions.
 \item UIDs, URLs, and public keys of Registration Machines that will be used
 in future elections and Registration Machines that were used in previous
 elections and have been removed from service.
@@ -365,28 +365,28 @@ Private Voting Machines:
 \begin{enumerate}
 
 \item
-Request for Ballot.  The reply includes the unmarked ballot
-and any public keys and names of Registration and
-Collection Machines known to the Registration Machine,
-and also the public keys of any M-Boxes known to the Registration
-Machine.
-
-The reply also contains version numbers and signatures of Private
-Voting Machine software known to the Registration Machine, and
-the status of each version, active or deprecated.
-
-The reply further contains the UIDs, URLs, and public keys of
-Registration Machines not being used in the current election,
-either because they have been removed from service or because
-they will be used in a future election.  The status of each such
-machine is included.
+Request for Ballot.  The reply includes:
+\begin{enumerate}
+\item the unmarked ballot
+\item UIDs, URLs, and public keys
+      of Registration Machines and Collection Machines being used
+      in the election
+\item public keys of M-Boxes being used in the election
+\item version numbers and cryptographic hashes
+      of Private Voting Machine software
+      known to the Registration Machine, and
+      the status of each version, active or deprecated
+\item UIDs, URLs, public keys, and status of Registration Machines not
+      being used in the current election because they have been removed
+      from service or are to be used in a future election
+\end{enumerate}
 
 \item
-Request for Certificate.  The request includes the signature
+Request for Certificate.  The request includes the cryptographic hash
 of an encrypted ballot prepared by the requesting Private
 Voting Machine.  The reply is a certificate containing
-the signature, the Private Voting Machine's UID,
-and a signature of the certificate by the Registation Machine.
+the cryptographic hash, the Private Voting Machine's UID,
+and a digital signature of the certificate by the Registation Machine.
 
 \item
 Request for Log.  The log entries created by requests from the
@@ -433,7 +433,7 @@ Initially the locked box of a Private Voting Machine contains:
 \item The UID of the Private Voting Machine.
 \item The public and private key of the Private Voting Machine.
 \item Public keys, UIDs, URLs, and status of some Registration Machines.
-\item Version number and signature of Private Voting Machine's current
+\item Version number and cryptographic hash of Private Voting Machine's current
       software.
 \setcounter{PVM-COUNTER}{\value{enumi}}
 \end{enumerate}
@@ -455,7 +455,7 @@ Machines used in the current election.
 \item The unmarked ballot.
 \item UIDs, public keys, and URLs of Registration Machines that are
 obsolete or will be used in future elections.
-\item Version numbers and signatures of different sofware versions
+\item Version numbers and cryptographic hashes of different sofware versions
 known to the Registration Machines.
 \end{enumerate}
 This can be done days or just minutes before the voter votes.
@@ -467,12 +467,12 @@ software using a Request for Sofware made to the Registration Machines.
 The next step is for the voter to vote by marking the ballot.
 
 After it is marked the ballot is encrypted and certified.  Encryption of the
-ballot is described below.  To certify the ballot, a signature
-is computed of the encrypted ballot, and the signature is sent
+ballot is described below.  To certify the ballot, a cryptographic hash
+is computed of the encrypted ballot, and the cryptographic hash is sent
 in a Request to Certify message to each of at least three Registration
 Machines.  These in turn send back certificates that are appended
 to the encrypted ballot to form the submitted ballot.  Each
-certificate contains the signature of the encrypted ballot, the
+certificate contains the cryptographic hash of the encrypted ballot, the
 UIDs of the Private Voting Machine and Registration Machine,
 and a time stamp.  The certificates
 are signed by the Registration Machines but are \underline{not} encrypted.
@@ -566,10 +566,12 @@ Private Voting Machines:
 \item
 Ballot Submission.  The Private Voting Machine uses this to sent
 its submitted ballot to the Collection Machine.  The latter accepts
-the submitted ballot if its Registration Machine certificate signatures
-and the enclosed unmarked ballot check, and rejects the submitted
+the submitted ballot if its Registration Machine certificate
+digital signatures check and the cryptographic hashes of the
+encrypted ballot check, and rejects the submitted
 ballot otherwise.  Note that a message not correctly encrypted with
-the private key of the submitting Private Voting Machine is ignored.
+the private key of the submitting Private Voting Machine and the
+public key of the receiving Collection Machine is ignored.
 
 Accepted submitted ballots are added to the locked box of the
 Collection Machine.
@@ -715,7 +717,7 @@ versions of the software.
 
 To keep such versions out of the system, the sofware should be
 placed on the same thumb drives as the locked boxes which the
-software will be used with.  In addition signatures of the
+software will be used with.  In addition cryptographic hashes of the
 software can be place in the locked boxes, and other independent
 software can be used to open the locked box and validate the
 thumb drive software.
