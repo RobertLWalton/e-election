@@ -235,7 +235,11 @@ language.
 In addition to producing binaries that can be trusted, one
 must distribute them.  The software for one of the E-Election
 System machines will be a set of read-only files, one of which will be
-the boot file that runs during startup.
+the boot file that runs during startup.\footnote{For example, all
+the software but device drivers may be in the boot file, with each
+device driver being in a separate file.  With this scheme no file
+need be more than several megabytes in size, and files can be
+requested individually if only some have been upgraded.}
 
 The files and the
 and their cryptographic hashs (e.g., SHA-256) will be available on multiple
@@ -385,8 +389,11 @@ Request for Ballot.  The reply includes:
 Request for Certificate.  The request includes the cryptographic hash
 of an encrypted ballot prepared by the requesting Private
 Voting Machine.  The reply is a certificate containing
-the cryptographic hash, the Private Voting Machine's UID,
-and a digital signature of the certificate by the Registation Machine.
+the cryptographic hash of the encrypted ballot,
+the Registration Machine and Private Voting Machine UIDs,
+the date and time according to the Registration Machine,
+and a digital signature of the certificate by the Registation Machine
+\pagref{CERTIFICATE-DETAILS}.
 
 \item
 Request for Log.  The log entries created by requests from the
@@ -394,11 +401,7 @@ requesting Private Voting Machine are returned in the reply.
 
 \item
 Request for Software.  The version of Private Voting Machine software
-requested in returned in the reply.\footnote{It may be necessary to
-modularize the software so that individual device drivers and
-the election software proper are separate modules.  Given this no module
-should be more than several megabytes in size.  If devices are sufficiently
-standardized this will not be necessary.}
+requested is returned in the reply.
 
 \end{enumerate}
 
@@ -524,6 +527,7 @@ encrypted ballot can be decrypted
 by any 5 M-boxes.  It does \underline{not} contain the voter's ID.
 
 \section{Certificate Details}
+\label{CERTIFICATE-DETAILS}
 
 For each encrypted ballot, several certificates are generated
 by Registration Machines acting independently.  Each certificate
@@ -532,10 +536,10 @@ contains:
 \item UID of the Private Voting Machine submitting the encrypted ballot.
 \item UID of the Registration Machine certifying the ballot.
 \item Date and time, as computed by the Registration Machine.
-\item Signature of the encrypted ballot as computed by the
+\item Cryptographic hash of the encrypted ballot as computed by the
       Private Voting Machine.  The encrypted ballot itself is
       \underline{never} sent to the Registration Machine.
-\item Signature of the certificate computed using the private key of
+\item Digital signature of the certificate computed using the private key of
 the Registration Machine.
 \end{enumerate}
 
