@@ -139,14 +139,14 @@ known to do what it should do.
 A Private Voting Machine
 (PVM) is constructed from a single thumb drive and a
 registration card.  Part of the thumb drive contains the
-tamper proof software of the PVM, part contains an encryped
+tamper proof software of the PVM, part contains an encrypted
 data set called a Voter Lock Box (V-Box), and the registration
 card contains a passkey that is entered on the keyboard in
 order to decrypt/encrypt the V-Box.  The software runs on
 a (fairly) arbitrary computer, is bootstrapped directly,
 runs without using any operating system or BIOS,
 uses only RAM memory during operation,
-writes the encryped V-Box back to the thumb drive, and sends
+writes the encrypted V-Box back to the thumb drive, and sends
 a very few encrypted messages to other `machines' in the
 system.
 
@@ -197,7 +197,7 @@ Tamper Proof Software is software written in a `tamper proof'
 programming language
 that has the following property:
 \begin{indpar}
-The translation of souce code to binary files is so precisely
+The translation of source code to binary files is so precisely
 specified that several independent groups of programmers can
 write compilers that will produce identical binaries from any
 given source.
@@ -247,7 +247,7 @@ need be more than several megabytes in size, and files can be
 requested individually if only some have been upgraded.}
 
 The files and the
-and their cryptographic hashs (e.g., SHA-256) will be available on multiple
+and their cryptographic hashes (e.g., SHA-256) will be available on multiple
 web sites.  Only the cryptographic hash of the boot file needs to be checked,
 as it will contain cryptographic hashes of the other files and will check
 the other files before they are used in running the machine.
@@ -279,7 +279,7 @@ people.  Typical passkeys consist of 2 or 3 pseudo-words
 and 4 to 6 digits, chosen at random.  An example is
 `vox64bam45zip01'.  A pseudo-word is equivalent to 3
 digits, so this example is the equivalent of 15 random
-digits, but the pseudo-words if chosen to be pronouncable
+digits, but the pseudo-words if chosen to be pronounceable
 tend to make the passkey easier to type.
 
 Each machine has a locked box.  Each precinct
@@ -314,11 +314,11 @@ When one machine sends a message to another, the sender
 encrypts the message proper with the sender's private
 key, and attaches the unencrypted sender's UID to the
 message.  Then the sender encrypts the message with the
-reciever's public key.  The sender must have the reciever's
+receiver's public key.  The sender must have the receiver's
 public key, and the receiver must have the sender's public
 key.  Public keys are not published,
 though the system is designed so that publishing public
-keys will not compromise security or essentual privacy,
+keys will not compromise security or essential privacy,
 and a voter can find out the public keys of Registration
 Machines and Collection Machines by examining his/her locked
 box using deviant software to decrypt and
@@ -388,7 +388,7 @@ Request for Ballot.  The reply includes:
 \item UIDs, URLs, public keys, and status of Registration Machines not
       being used in the current election because they have been removed
       from service or are to be used in a future election.
-\item A long truely random bit string, for use only if the
+\item A long truly random bit string, for use only if the
       Private Voting Machine hardware does not have its own hardware
       random number generator (most recent computer processors have
       such).  If this has to be used, it will be exclusively OR'ed with
@@ -404,7 +404,7 @@ Voting Machine.  The reply is a certificate containing
 the cryptographic hash of the encrypted ballot,
 the Registration Machine and Private Voting Machine UIDs,
 the date and time according to the Registration Machine,
-and a digital signature of the certificate by the Registation Machine
+and a digital signature of the certificate by the Registration Machine
 \pagref{CERTIFICATE-DETAILS}.
 
 \item
@@ -426,7 +426,7 @@ to the precinct.  Each precinct should have at least 3
 Registration Machines available.
 
 Note that Private Voting Machines have no concept of time.
-If they cannot contact Registation Machines used in the last
+If they cannot contact Registration Machines used in the last
 election, they will try to contact Registration Machines
 slated for use in future elections, and if successful, will
 update their locked box according the Request for Ballot
@@ -471,7 +471,7 @@ Machines used in the current election.
 \item UIDs, public keys, and URLs of Registration Machines that are
 obsolete or will be used in future elections.
 \item Version numbers and cryptographic hashes of different Private
-Voting Machine sofware versions known to the Registration Machines.
+Voting Machine software versions known to the Registration Machines.
 \item The exclusive OR of the random bit strings provided by the
 Registration Machines, if this is needed.
 \end{enumerate}
@@ -479,7 +479,7 @@ This can be done days or just minutes before the voter votes.
 
 At this point
 the voter may or may not choose to update Private Voting Machine
-software using a Request for Sofware made to the Registration Machines.
+software using a Request for Software made to the Registration Machines.
 
 The next step is for the voter to vote by marking the ballot.
 
@@ -502,7 +502,7 @@ ballot contains:
 \begin{enumerate}
 \item The encrypted ballot.
 \item Certificates received for the encrypted ballot.  Each contains the
-UIDs of the Private Voting Machine and certifying Registation Machine.
+UIDs of the Private Voting Machine and certifying Registration Machine.
 \item A copy of the unencrypted \underline{unmarked} ballot, for
 diagnostic purposes.
 \item Version number of the Private Voting Machine software, for
@@ -679,7 +679,7 @@ a network physically separate from the internet.
 A ballot is valid unless:
 
 \begin{enumerate}
-\item It has been superceded by a later ballot from the same
+\item It has been superseded by a later ballot from the same
 Private Voting Machine.
 \item It is from a Private Voting Machine that is not valid.
 \end{enumerate}
@@ -694,7 +694,7 @@ This is an aid to testing \pagref{TESTING}.
 
 Counting is done separately for each vote count.
 
-Counting Machines recieve a complete sorted set of encrypted ballots
+Counting Machines receive a complete sorted set of encrypted ballots
 from each collection machine, and check to be sure these sets
 are the same.  Using cryptographic hashes of the sets, the Counting
 Machines check that each Counting Machine has received the same set.
@@ -799,6 +799,105 @@ Because voters can check the logs of Registration and Collection Machines
 for summary information about the votes that the voter's Private Voting Machine
 has cast, it should be very difficult to suppress votes and not be detected.
 
+\section{Election Preparation}
+
+There are many ways to prepare the various Machines needed in an election,
+and the one we outline here is but an example.
+
+The town holding the election has 3 preparation computers that are
+connected to each other by a physical network but which are not
+physically connected to the internet.  To avoid hacked hardware
+produced by a single vendor, the 3 computers are from different
+computer vendors.  Each has a good hardware random number generator
+(as is built into most modern processors).
+
+Assume that election is going to be carried out by 3 election
+officials, each responsible for 1 Registration Machine, 1 Collection
+Machine, and 1 Counting Machine.  They each use a different one of
+the 3 preparation computers.
+
+An election Machine can make its own locked box containing its UID
+and public/private key.  Initially the software for the machine
+is copied from the internet to the Machine's thumb drive,
+the cryptographic hash of its boot file is obtained by examining
+and crosschecking multiple public web pages, the thumb
+drive is set read-only with a physical switch and the cryptographic
+hash of its boot file is checked using commodity software.
+Then the Machine is run and makes its own initial locked box.
+
+So first the 3 election officials each make a Counting Machine,
+each Counting Machine makes 3 or 4 of the M-Boxes.  Then
+the Counting Machines exchange their UIDs and public keys and M-Box
+numbers and public keys over the local net
+and each writes a separate Counting Machine information
+thumb drive containing all the
+Counting Machine UIDs and public keys and all the M-Box numbers and
+public keys.  These Counting Machine information
+thumb drives are identical and are made read-only.
+
+Then the 3 election officials each make a Collection Machine
+that takes a Counting Machine information thumb drive as input,
+and produces a Collection Machine information drive containing
+the URLs, UIDs, and public keys of all the Collection Machines.
+
+Then the 3 election officials each make a Registration Machine
+that takes the Counting and Collection Machine information
+drives as input.  However the Registration Machines take
+a pre-prepared additional input thumb drive that contains
+their public/private keys and URLs, as these must be known
+long in advance in order to prepare Private Voting Machines.
+The Registration Machines create their own UIDs
+and produce a Registration Machine information
+drive containing the URLs, UIDs, and public keys of all Registration
+Machines.
+
+Then the Registration Machine information thumb drives are each input
+to a Collection Machine which adds the Registration Machine
+UIDs and public keys to its locked
+box, and the Collection Machine information thumb drives are each
+input to a Counting Machine which adds the Collection Machine
+UIDs and public keys to its locked box.
+
+In addition 3 thumb drives each containing the UIDs and public
+keys of all the initially known Private Voting Machines plus
+the unmarked ballot are
+each input to one of the Registration Machines and one of the
+Collection Machines which add this information to their locked
+box.
+
+When not being used for all this the preparation machines can
+be used to create Private Voting Machines that are not yet
+assigned to a voter, and record their UIDs and public keys
+in a separate data base.  Each of these can then be given to a voter
+and its UID can be recorded in the separate database that records
+the name, address, and birthday of the voter.  From this
+data base thumb drives containing UIDs and public keys of
+Private Voting Machines can be prepared and passed to the
+Collection Machines and Registration Machines which will add
+initial or new information to their locked boxes.
+
+The preparation machines, when not being used otherwise, can
+be used to maintain the data base of Private Voting Machine
+UIDs and public keys,
+the voter data base, and the data base of
+Registration Machine URLs and public/private keys.
+These data bases can have triplicate copies, each maintained
+by one of the preparation machines.  These data bases should
+be log based: each is has an underlying log of all changes
+that is only added to and never otherwise modified,
+and the database can be remade at any point by executing the
+operations in the log.
+
+Election officials need not know the details above.
+They merely need to be able to follow a script that tells
+them when to create a new writable thumb drive with a particular
+label, when to insert a thumb drive with a particular label
+as read-only or writable, when to boot the computer,
+and when to remove a thumb drive with a particular label.
+A small amount of information may be collected when the programs run,
+e.g., the URLs of the Collection Machines.
+
+
 \section{Other Considerations}
 
 There are other considerations that need to be taken into
@@ -812,24 +911,21 @@ Collection Machines from being overloaded by spurious internet packets.
 However as the voting period will be one or several weeks, such
 overloading is unlikely to be more than a nuisance.
 
-To prevend overloading the memory used to hold the locked boxes,
+To prevent overloading the memory used to hold the locked boxes,
 Registration Machines and Collection Machines need to limit the
-number of requests they recieve from a particular Private Voting Machine.
+number of requests they receive from a particular Private Voting Machine.
 If these limits need to be legitimately expanded for a particular
 voter, that voter may have his/her Private Voting Machine de-registered
 and get a new Private Voting Machine.
 
 \subsection{Meta-Data}
 
-ISPs will be above to collect meta-data that will allow them to
-make good guesses as to with IP addresses were used to cast votes.
-However, better information of this kind is made publically available
+ISPs will be able to collect meta-data that will allow them to
+make good guesses as to which IP addresses were used to cast votes.
+However, better information of this kind is made publicly available
 (e.g., to registered political parties) after the election anyway,
 and ISPs are unlikely to give this meta-data to anyone trying to
 guess voter IP addresses.
 
-\subsection{Election Preparation}
-
-TBD
 
 \end{document}
