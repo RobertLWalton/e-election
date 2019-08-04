@@ -230,10 +230,15 @@ for most of the code, and can be machine independent.
 A few functions can be optimized by being written in assembly
 language.
 
-\section{Software Distribution}
+\section{Software Distribution}\label{SOFTWARE-DISTRIBUTION}
 
-In addition to producing binaries that can be trusted, one
-must distribute them.  The software for one of the E-Election
+Since the software is published and compilers for its tamper-proof
+language are to be readily available, it is easy to make deviant
+versions of the software.\label{DEVIANT-SOFTWARE}
+
+Thus the binaries that can be trusted must be reliably distributed.
+
+The software for one of the E-Election
 System machines will be a set of read-only files, one of which will be
 the boot file that runs during startup.\footnote{For example, all
 the software but device drivers may be in the boot file, with each
@@ -317,7 +322,7 @@ keys will not compromise security or essentual privacy,
 and a voter can find out the public keys of Registration
 Machines and Collection Machines by examining his/her locked
 box using deviant software to decrypt and
-display the locked box \pagref{DEVIANT-SOFTWARE}.
+display the locked box (see \pageref{DEVIANT-SOFTWARE} above).
 
 Note that Counting Machines are never given Private Voting
 Machine UIDs or public keys, and can never associate an
@@ -576,7 +581,8 @@ The locked box of a Collection Machine initially contains:
 \begin{enumerate}
 \newcounter{CML-COUNTER}
 \item The private key of the Collection Machine.
-\item Public keys and UIDs of all Registration Machines.
+\item UIDs and public keys of all Registration, Collection, and Counting
+      Machines.
 \item The unmarked ballot.
 \item UIDs and associated public keys of all Private Voting
 Machines.  This includes de-registered and test Private Voting
@@ -678,21 +684,11 @@ Private Voting Machine.
 \item It is from a Private Voting Machine that is not valid.
 \end{enumerate}
 
-During after-voting processing the following are added to each
-Collection Machine Locked box:
-
-\begin{enumerate}
-\setcounter{enumi}{\value{CML-COUNTER}}
-\item The UIDs and public keys of all other Collection Machines.
-\item The UIDs and public keys of all Counting Machines.
-\item For each count:
-\begin{enumerate}
-\item Set of UIDs of valid Private Voting Machines.
-\item Sorted set of valid ballots.
-\item Sorted set of valid ballot headers.
-\item Sorted set of valid encrypted ballots.
-\end{enumerate}
-\end{enumerate}
+Information specific to a particular vote count, e.g., the
+list of valid Private Voting Machines and set of valid ballots,
+is \underline{not} added to the Collection Machine locked box,
+so that a Collection Machine has no memory of past vote counts.
+This is an aid to testing \pagref{TESTING}.
 
 \section{Counting Machine Details}
 
@@ -711,10 +707,9 @@ An M-box contains nothing but its number (1 though 10)
 and the private key of the M-box.
 
 The Counting Machine locked box contains nothing but the UIDs
-and public keys of all Collection Machines and Counting Machines,
-and a log of all
-the vote counts.  It does not contain encrypted ballots, but does
-contain within the log cryptographic hashes of encrypted ballot sets.
+and public keys of all Collection Machines and Counting Machines.
+It does not contain any information specific to a vote count,
+as an aid to testing \pagref{TESTING}.
 
 Write-ins can be tabulated by the Counting Machines in a manner
 generally similar to regular votes.  A write-in is a piece of
@@ -728,7 +723,7 @@ card) is lost or stolen, the voter may have the machine
 de-registered\label{DE-REGISTERED}
 and replaced by a new Private Voting Machine.
 
-\section{Testing}
+\section{Testing}\label{TESTING}
 
 All election machines are in triplicate copies which check up on each
 other, except the Private Voting Machines.  Therefore testing
@@ -761,7 +756,8 @@ test voting or test counting from real election voting and counting.
 In particular, the Collection and Counting Machines cannot use the
 number of valid Private Voting Machines in a count as an indicator
 of the presence of test votes, as the numbers will be similar in the
-official count and the test re-count.
+official count and the test re-count, and these machines retain no
+records of previous vote counts in their locked boxes.
 
 Test Private Voting Machines should be run on the same kinds of
 hardware that real voters use, so if computers manufactured by a
@@ -785,9 +781,13 @@ System shares this with absentee voting systems.  However, since its
 nearly impossible to buy large numbers of votes without being detected,
 such easier verification is not significant.
 
+As an added safe-guard an e-mail or letter may be sent to each voter after the
+election telling the voter when they voted, just in case the voter's
+Private Voting Machine has been `stolen' by an unscrupulous friend.
+
 \section{Voter Suppression}
 
-Attempts to suppress votes are more common that attempts to buy votes.
+Attempts to suppress votes are more common than attempts to buy votes.
 
 Using Registration Machines to distribute updates for Registration
 Machine lists and software should make voter suppression very difficult.
@@ -795,23 +795,41 @@ It would probably be a good idea, however, to have each voter come into
 the voter registration office once every 5 years to get a new
 Private Voting Machine, at which time their old one is de-registered.
 
+Because voters can check the logs of Registration and Collection Machines
+for summary information about the votes that the voter's Private Voting Machine
+has cast, it should be very difficult to suppress votes and not be detected.
 
-\section{Deviant Software}
-\label{DEVIANT-SOFTWARE}
+\section{Other Considerations}
 
-Since the software is published and compilers for its tamper-proof
-language are to be readily available, it is easy to make deviant
-versions of the software.
+There are other considerations that need to be taken into
+account when producing an E-Election System.  Some of these,
+with suggestions for dealing with them, are as follows.
 
-To keep such versions out of the system, the sofware should be
-placed on the same thumb drives as the locked boxes which the
-software will be used with.  In addition cryptographic hashes of the
-software can be place in the locked boxes, and other independent
-software can be used to open the locked box and validate the
-thumb drive software.
+\subsection{Denial of Service}
 
-Using duplicated Registration Machines to distribute software updates should
-make if nearly impossible for hackers
-to introduce deviant software on a large scale.
+Standard methods need to be employed to prevent Registration and
+Collection Machines from being overloaded by spurious internet packets.
+However as the voting period will be one or several weeks, such
+overloading is unlikely to be more than a nuisance.
+
+To prevend overloading the memory used to hold the locked boxes,
+Registration Machines and Collection Machines need to limit the
+number of requests they recieve from a particular Private Voting Machine.
+If these limits need to be legitimately expanded for a particular
+voter, that voter may have his/her Private Voting Machine de-registered
+and get a new Private Voting Machine.
+
+\subsection{Meta-Data}
+
+ISPs will be above to collect meta-data that will allow them to
+make good guesses as to with IP addresses were used to cast votes.
+However, better information of this kind is made publically available
+(e.g., to registered political parties) after the election anyway,
+and ISPs are unlikely to give this meta-data to anyone trying to
+guess voter IP addresses.
+
+\subsection{Election Preparation}
+
+TBD
 
 \end{document}
