@@ -730,30 +730,43 @@ and replaced by a new Private Voting Machine.
 
 \section{Testing}
 
-Some Private Voting Machines are used as `testers'\label{TESTER} for
-system software and hardware.
+All election machines are in triplicate copies which check up on each
+other, except the Private Voting Machines.  Therefore testing
+for security and other problems is centered on the Private Voting
+Machines.
+
+The basic E-Election System philosophy of testing is to run tests
+that appear to hardware just like real election runs.  Then if
+some hardware is hacked and corrupts the result, the corruption
+will be found out.  For this to work, it is important that the
+hardware not be able to distinguish a test run from a real election run.
+
+Some Private Voting Machines are designated as
+`test machines'\label{TEST-MACHINE}.
 These are used by election officials to cast known votes that can
 be checked to ensure that the system and hardware is working as
-desired.
+desired.  These test votes are cast during the normal election
+period, using the same Registration and Collection Machines
+as official votes, and in fact the Registration and Collection Machines
+do not know the difference between a test vote and an official vote
+until after voting is finished.
 
-To check test votes, a test-re-count is conducted in which
-the Collection Machines are told that the test Private Voting
-Machines are valid: i.e., not test and not de-registered.  The
-test recount should produces counts whose difference exactly
-equals the votes of the test machines, which can be recorded on
-paper when the test administrators use them to vote.  If there
-is a slight mismatch, the test ballots can be counted by themselves
-by the Collection/Counting machines.  Furthermore, a Counting Machine
-can display a ballot, since all association with a voter has been
-removed, so the test ballots can be displayed if necessary to
-resolve discrepancies introduces by minor election official error.
+To check test votes, a re-count is done with both valid Private Voting
+Machines and Test Private Voting Machines presented as valid to the
+Collection Machines.  The difference between the official count and
+this re-count should be exactly the votes from the test machines.
 
-The testing procedure involves running Machines on the same kinds
-of hardware that would be used in non-test voting and counting,
-in a way that the software and hardware of these machines has no
-way of knowing that they are being run as tests.  In particular, if a
-hardware manufacturer is producing hacked hardware that corrupts
-ballots or counting, this will be eventually detected.
+None of the E-Election Computers will be able to distinguish
+test voting or test counting from real election voting and counting.
+In particular, the Collection and Counting Machines cannot use the
+number of valid Private Voting Machines in a count as an indicator
+of the presence of test votes, as the numbers will be similar in the
+official count and the test re-count.
+
+Test Private Voting Machines should be run on the same kinds of
+hardware that real voters use, so if computers manufactured by a
+particular vendor are hacked, the hack will be detected.
+
 
 \section{Vote Buying}
 
