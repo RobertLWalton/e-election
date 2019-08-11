@@ -166,11 +166,21 @@ provide decrypted M-Boxes in order to decrypt ballots and
 produce final counts.
 
 Each Machine and each M-Box has a public key and a private key.
+The E-Election Machines that participate in
+a particular election for a particular
+precinct form a virtual private network that is disconnected from
+the rest of the world, the internet in particular.  This E-Election
+network works by encrypting all messages with the private key of the
+sender and the public key of the receiver, and distributing public
+keys of Private Voting Machines only by directly copying them from
+thumb drives.  Messages to and from Private Voting Machines do pass
+through the internet, but as they are encrypted by keys that never
+pass through the internet, the E-Election network is effectively
+disconnected from the internet.
+
 Each precinct has its own separate set of Counting Machines and M-Boxes,
 but precincts may share Collection Machines and Registration
-Machines.
-
-Collection Machines,
+Machines.  Collection Machines,
 Counting Machines, and M-Boxes may be
 specific to a particular election, but Registration Machines
 and Private Voting Machines and
