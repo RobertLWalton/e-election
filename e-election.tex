@@ -112,7 +112,7 @@
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}}
 
-\date{August 3, 2019}
+\date{August 11, 2019}
 
 \maketitle
 
@@ -256,14 +256,24 @@ device driver being in a separate file.  With this scheme no file
 need be more than several megabytes in size, and files can be
 requested individually if only some have been upgraded.}
 
-The files and the
-and their cryptographic hashes (e.g., SHA-256) will be available on multiple
-web sites.  Only the cryptographic hash of the boot file needs to be checked,
-as it will contain cryptographic hashes of the other files and will check
-the other files before they are used in running the machine.
-Widely available commodity software running under commodity operating systems
-can be used to check the cryptographic hash of the boot file.
+At least three different and independent organizations should provide
+the E-Election files.  Each organization starts with the same public
+source files.  Each organization writes its own compiler for the
+tamper proof software.  Each organization publishes on its web site
+the source files and binary files, and cryptographic hashes that
+can be used to verify that the software on an E-Election Machine
+matches that provided by the organization.
 
+All the organizations should end up with identical files and
+cryptographic hashes.  The cryptographic hashes (e.g., SHA-256)
+of software on the E-Election Machine thumb drives can be checked
+by widely available commodity software running under commodity
+operating systems.  Results can be compared with the hashes on
+all the organization web sites.
+
+Only the cryptographic hash of the boot file needs to be checked,
+as it will contain cryptographic hashes of the other files and it will check
+the other files before they are used in running the machine.
 To avoid hacking by commodity software during a cryptographic hash check,
 the E-Election Machine thumb drive should have a physical read-only
 switch.
@@ -289,7 +299,7 @@ people.  Typical passkeys consist of 2 or 3 pseudo-words
 and 4 to 6 digits, chosen at random.  An example is
 `vox64bam45zip01'.  A pseudo-word is equivalent to 3
 digits, so this example is the equivalent of 15 random
-digits, but the pseudo-words if chosen to be pronounceable
+digits, but the pseudo-words, if chosen to be pronounceable,
 tend to make the passkey easier to type.
 
 Each machine has a locked box.  Each precinct
@@ -337,6 +347,7 @@ display the locked box (see \pageref{DEVIANT-SOFTWARE} above).
 Note that Counting Machines are never given Private Voting
 Machine UIDs or public keys, and can never associate an
 encrypted ballot with a particular Private Voting Machine.
+And only Counting Machines are given decrypted M-Boxes.
 
 \section{Registration Machine Details}
 
@@ -398,12 +409,12 @@ Request for Ballot.  The reply includes:
 \item UIDs, URLs, public keys, and status of Registration Machines not
       being used in the current election because they have been removed
       from service or are to be used in a future election.
-\item A long truly random bit string, for use only if the
+\item If requested, a long truly random bit string for use with
       Private Voting Machine hardware does not have its own hardware
       random number generator (most recent computer processors have
       such).  If this has to be used, it will be exclusively OR'ed with
       the random bit strings of at least 2 other Registration Machines
-      so no one Registration Machine will know the random numbers being
+      so that no one Registration Machine will know the random numbers being
       used.
 \end{enumerate}
 
@@ -451,6 +462,12 @@ is used by its voter for multiple elections over a period
 of several years, after which the Private Voting Machine
 is de-registered and a new Private Voting Machine
 is given to the voter.
+
+A voter gets her/his Private Voting Machine as part of voter
+registration at the Town Clerk's Office.
+If a Private Voting Machine (i.e., its thumb drive and/or registration
+card) is lost or stolen, the voter may have the machine
+de-registered and replaced by a new Private Voting Machine.
 
 Initially the locked box of a Private Voting Machine contains:
 \newcounter{PVM-COUNTER}
@@ -503,8 +520,7 @@ certificate contains the cryptographic hash of the encrypted ballot, the
 UIDs of the Private Voting Machine and Registration Machine,
 and a time stamp.  The certificates
 are signed by the Registration Machines but are \underline{not} encrypted.
-The certificates are copied to the Registration Machine log, and can be
-be viewed by the public.
+The certificates are copied to the Registration Machine log.
 
 The submitted ballot is now sent by the Private Voting
 Machine to at least three Collection Machines.  The submitted
@@ -561,14 +577,14 @@ The encrypted ballot consists of:
       different one of the 10 M-Box public keys.
 \end{enumerate}
 The encrypted ballot can be decrypted
-by any 5 M-boxes private keys.
+by any 5 M-box private keys.
 It does \underline{not} contain the voter's UID.
 
 \section{Certificate Details}
 \label{CERTIFICATE-DETAILS}
 
-For each encrypted ballot, several certificates are generated
-by Registration Machines acting independently.  Each certificate
+For each encrypted ballot, a certificate is generated
+by each of several Registration Machines acting independently.  Each certificate
 contains:
 \begin{enumerate}
 \item UID of the Private Voting Machine submitting the encrypted ballot.
@@ -618,14 +634,16 @@ Private Voting Machines:
 \begin{enumerate}
 
 \item
-Ballot Submission.  The Private Voting Machine uses this to sent
+Ballot Submission.  The Private Voting Machine uses this to send
 its submitted ballot to the Collection Machine.  The latter accepts
-the submitted ballot if its Registration Machine certificate checks,
-all the digital signatures check, and the cryptographic hashes of the
-encrypted ballot check, and rejects the submitted
-ballot otherwise.  Note that a message not correctly encrypted with
+the submitted ballot if its Registration Machine certificate
+digital signatures check, the cryptographic hashes of the
+encrypted ballot check that are in the certificates check,
+and the copy of the unmarked ballot checks.
+Otherwise the Collection Machine rejects the submitted
+ballot.  Note that a message not correctly encrypted with
 the private key of the submitting Private Voting Machine and the
-public key of the receiving Collection Machine is ignored.
+public key of the receiving Collection Machine is completely ignored.
 
 Accepted submitted ballots are added to the locked box of the
 Collection Machine.
@@ -654,7 +672,7 @@ Counting Machines.
 \item Transmit to each other their sets of accepted submitted ballots.
 \item Merge into their own set of accepted submitted ballots any
 received from other Collection Machines that they did not have previously.
-At this point, all Collection Machines have the same set of accepted
+At this point, the Collection Machines all have the same set of accepted
 submitted ballots.
 \setcounter{CMC-COUNTER}{\value{enumi}}
 \end{enumerate}
@@ -689,9 +707,9 @@ a network physically separate from the internet.
 A ballot is valid unless:
 
 \begin{enumerate}
+\item It is from a Private Voting Machine that is not valid.
 \item It has been superseded by a later ballot from the same
 Private Voting Machine.
-\item It is from a Private Voting Machine that is not valid.
 \end{enumerate}
 
 Information specific to a particular vote count, e.g., the
@@ -704,14 +722,25 @@ This is an aid to testing \pagref{TESTING}.
 
 Counting is done separately for each vote count.
 
-Counting Machines receive a complete sorted set of encrypted ballots
-from each collection machine, and check to be sure these sets
-are the same.  Using cryptographic hashes of the sets, the Counting
-Machines check that each Counting Machine has received the same set.
+During counting, the Counting Machines may communicate with
+each other using a network that is physically disconnected
+from any other network.  The information they receive over this
+network is used to check the counting process, but is not used
+by any Counting Machine to modify its counting process.
 
-Each Counting Machine is then given 5 M-boxes and proceeds to
-decrypt and count the ballots.  The Counting Machines then compare
-the counts to verify that all Counting Machines go the same counts.
+Each Counting Machine receives a complete sorted set of encrypted ballots
+from one of the Collection Machines (assuming there are the same
+number of Counting Machines as Collection Machines, and using an
+arbitrary 1-1 correspondence).
+Using cryptographic hashes of the sets, the Counting
+Machines check that each Counting Machine has received the same set
+of encrypted ballots.
+
+Each Counting Machine is then given 5 M-boxes with passkeys,
+and the Counting Machine proceeds to decrypt the M-boxes and
+decrypt and count the ballots.  The Counting Machines then use
+cryptographic hashes to check
+that all Counting Machines produced the same counts.
 
 An M-box contains nothing but its number (1 though 10)
 and the private key of the M-box.
@@ -725,13 +754,6 @@ Write-ins can be tabulated by the Counting Machines in a manner
 generally similar to regular votes.  A write-in is a piece of
 text, and counts can be given each piece of text and for groups
 of similar pieces of text.
-
-\section{De-Registration}
-
-If a Private Voting Machine (i.e., its thumb drive and registration
-card) is lost or stolen, the voter may have the machine
-de-registered\label{DE-REGISTERED}
-and replaced by a new Private Voting Machine.
 
 \section{Testing}\label{TESTING}
 
@@ -753,8 +775,7 @@ be checked to ensure that the system and hardware is working as
 desired.  These test votes are cast during the normal election
 period, using the same Registration and Collection Machines
 as official votes, and in fact the Registration and Collection Machines
-do not know the difference between a test vote and an official vote
-until after voting is finished.
+do not know the difference between a test vote and a normal vote.
 
 To check test votes, a re-count is done with both valid Private Voting
 Machines and Test Private Voting Machines presented as valid to the
@@ -821,7 +842,7 @@ produced by a single vendor, the 3 computers are from different
 computer vendors.  Each has a good hardware random number generator
 (as is built into most modern processors).
 
-Assume that election is going to be carried out by 3 election
+Assume that the election is going to be carried out by 3 election
 officials, each responsible for 1 Registration Machine, 1 Collection
 Machine, and 1 Counting Machine.  They each use a different one of
 the 3 preparation computers.
@@ -868,12 +889,13 @@ box, and the Collection Machine information thumb drives are each
 input to a Counting Machine which adds the Collection Machine
 UIDs and public keys to its locked box.
 
-In addition 3 thumb drives each containing the UIDs and public
+In addition 3 identical thumb drives each containing the UIDs and public
 keys of all the initially known Private Voting Machines plus
 the unmarked ballot are
 each input to one of the Registration Machines and one of the
 Collection Machines which add this information to their locked
-box.
+box.  From time to time thumb drives may be used to augment
+this information during the election.
 
 When not being used for all this the preparation machines can
 be used to create Private Voting Machines that are not yet
@@ -901,10 +923,11 @@ operations in the log.
 Election officials need not know the details above.
 They merely need to be able to follow a script that tells
 them when to create a new writable thumb drive with a particular
-label, when to insert a thumb drive with a particular label
+label and registration card,
+when to insert a thumb drive with a particular label
 as read-only or writable, when to boot the computer,
 and when to remove a thumb drive with a particular label.
-A small amount of information may be collected when the programs run,
+A small amount of information may be input when the programs run,
 e.g., the URLs of the Collection Machines.
 
 
@@ -913,6 +936,15 @@ e.g., the URLs of the Collection Machines.
 There are other considerations that need to be taken into
 account when producing an E-Election System.  Some of these,
 with suggestions for dealing with them, are as follows.
+
+\subsection{Thumb Drive Identification}
+
+Although any thumb drives can be used, preferably ones with
+a physical read-only switch, it would be better to
+have special thumb drives with distinctive markings or even
+a larger than usual size.  This would make it less likely
+that a voter's Voter Registration Machine would be lost
+among the voter's other thumb drives.
 
 \subsection{Denial of Service}
 
