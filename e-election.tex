@@ -112,7 +112,7 @@
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}}
 
-\date{August 11, 2019}
+\date{August 21, 2019}
 
 \maketitle
 
@@ -311,12 +311,10 @@ in public/private pairs.
 These are \underline{not} the same as the passkey of any locked box.
 Passkeys are symmetric encryption keys.
 
-Each Machine
+Each Machine and each M-Box
 has a Unique ID, or UID, which is a 1024 bit random number
-used to identify the machine.  This UID serves as the
-machine's name.
-
-Each M-box for a precinct and election has a number from 1 though 10.
+used to identify the machine or M-Box.  This UID serves as the
+machine's or M-Box's name.
 
 Each Registration and Collection Machine has a URL.
 
@@ -355,22 +353,25 @@ A Registration Machine is run by a single election official
 who holds the registration card containing the the passkey to
 the machine's locked box.  The Registration Machine in this
 sense is specific to a particular election, but the
-URL naming the Registration Machine and the machine's
-public/private key pair will typically remain the same across
+URL of the Registration Machine and the machine's
+public/private key pair and UID will typically remain the same across
 several elections.
 
 The locked box of a Registration Machine contains:
 \begin{enumerate}
-\item The private key of the Registration Machine.
-\item Public keys of all Registration Machines, all Collection
+\item The public/private key pair of the Registration Machine.
+\item Public keys and UIDs of all Registration Machines, all Collection
 Machines, and all M-Boxes.
-\item Machine UIDs and URLs of all Registration Machines and all Collection
-Machines.
+\item URLs of all Registration Machines and all Collection Machines.
 \item The unmarked ballot.
 \item UIDs and associated public keys of all Private Voting
 Machines.  This includes de-registered and test Private Voting
 Machines, as Registration Machines do not know which Private Voting
 Machines are de-registered or test machines.
+
+During the election the Registration Machines will receive updates
+that add to this list of UIDs and public keys of Private Voting
+Machines.
 \item A log of any transactions the Registration Machine has
 been involved in, including  Certificates issued by the Registration Machine.
 Private Voting Machines are identified by their UID and not by the
@@ -378,7 +379,7 @@ name/address of their voter.
 
 During the election the portion of the log involving transactions with
 a particular Private Voting Machine is visible to that Private Voting
-Machine.  \underline{After} the election the entire log will be available to
+Machine.  \underline{After} the election the entire log will be available
 to the public under the same terms as voter registration lists are
 available (e.g., in Massachusetts they are available to registered
 political parties).
@@ -398,10 +399,10 @@ Private Voting Machines:
 Request for Ballot.  The reply includes:
 \begin{enumerate}
 \item The unmarked ballot.
-\item UIDs, URLs, and public keys
+\item Public keys, UIDs, and URLs
       of Registration Machines and Collection Machines being used
       in the election.
-\item Public keys of M-Boxes being used in the election.
+\item Public keys and UIDs of M-Boxes being used in the election.
 \item Version numbers and cryptographic hashes
       of Private Voting Machine software
       known to the Registration Machine, and
@@ -409,7 +410,7 @@ Request for Ballot.  The reply includes:
 \item UIDs, URLs, public keys, and status of Registration Machines not
       being used in the current election because they have been removed
       from service or are to be used in a future election.
-\item If requested, a long truly random bit string for use with
+\item If requested, a long truly random bit string for use when
       Private Voting Machine hardware does not have its own hardware
       random number generator (most recent computer processors have
       such).  If this has to be used, it will be exclusively OR'ed with
@@ -472,9 +473,8 @@ de-registered and replaced by a new Private Voting Machine.
 Initially the locked box of a Private Voting Machine contains:
 \newcounter{PVM-COUNTER}
 \begin{enumerate}
-\item The UID of the Private Voting Machine.
-\item The public and private key of the Private Voting Machine.
-\item Public keys, UIDs, URLs, and status of some Registration Machines.
+\item The UID and public/private key pair of the Private Voting Machine.
+\item Public keys, UIDs, URLs, and current status of some Registration Machines.
 \item Version number and cryptographic hash of Private Voting Machine's current
       software.
 \setcounter{PVM-COUNTER}{\value{enumi}}
@@ -493,9 +493,9 @@ add to its locked box the following information:
 \item URLs, public keys, and UIDs
 of all Registration Machines and all Collection
 Machines used in the current election.
-\item Public keys of the M-Boxes used in the current election.
+\item Public keys and UIDs of the M-Boxes used in the current election.
 \item The unmarked ballot.
-\item UIDs, public keys, and URLs of Registration Machines that are
+\item Public keys, UIDs, and URLs of Registration Machines that are
 obsolete or will be used in future elections.
 \item Version numbers and cryptographic hashes of different Private
 Voting Machine software versions known to the Registration Machines.
@@ -520,7 +520,7 @@ certificate contains the cryptographic hash of the encrypted ballot, the
 UIDs of the Private Voting Machine and Registration Machine,
 and a time stamp.  The certificates
 are signed by the Registration Machines but are \underline{not} encrypted.
-The certificates are copied to the Registration Machine log.
+The certificates are copied to the Registration Machine logs.
 
 The submitted ballot is now sent by the Private Voting
 Machine to at least three Collection Machines.  The submitted
@@ -575,6 +575,8 @@ The encrypted ballot consists of:
       Shamir's Secret Sharing scheme.
 \item The 10 K-Keys each encrypted with a
       different one of the 10 M-Box public keys.
+      Each encrypted K-Key is paired with the unencrypted
+      UID of the M-Box whose public key encrypts it.
 \end{enumerate}
 The encrypted ballot can be decrypted
 by any 5 M-box private keys.
@@ -606,20 +608,22 @@ ballot.
 The locked box of a Collection Machine initially contains:
 \begin{enumerate}
 \newcounter{CML-COUNTER}
-\item The private key of the Collection Machine.
-\item UIDs and public keys of all Registration, Collection, and Counting
-      Machines.
+\item The public/private key pair of the Collection Machine.
+\item UIDs and public keys of all Registration Machines.
 \item The unmarked ballot.
 \item UIDs and associated public keys of all Private Voting
 Machines.  This includes de-registered and test Private Voting
-Machines, as Collection Machines do not initially know which Private Voting
+Machines, as Collection Machines do not know which Private Voting
 Machines are de-registered or test machines.
+
+During the election the Collection Machines will receive updates
+that add to this list of UIDs and public keys of Private Voting
+Machines.
 \setcounter{CML-COUNTER}{\value{enumi}}
 \end{enumerate}
 
-During voting the collection machines may receive updates to the
-list UIDs and public keys of Private Voting Machines, and will
-receive submitted ballots.  The later cause the following to be
+During voting the collection machines will
+receive submitted ballots.  These cause the following to be
 added to the Collection Machine locked box:
 
 \begin{enumerate}
@@ -742,11 +746,11 @@ decrypt and count the ballots.  The Counting Machines then use
 cryptographic hashes to check
 that all Counting Machines produced the same counts.
 
-An M-box contains nothing but its number (1 though 10)
-and the private key of the M-box.
+An M-box contains nothing but its UID and public/private key pair.
 
-The Counting Machine locked box contains nothing but the UIDs
-and public keys of all Collection Machines and Counting Machines.
+The Counting Machine locked box contains nothing but its
+UID and public/private key pair and the UIDs
+and public keys of all Collection Machines and all other Counting Machines.
 It does not contain any information specific to a vote count,
 as an aid to testing \pagref{TESTING}.
 
@@ -848,7 +852,7 @@ Machine, and 1 Counting Machine.  They each use a different one of
 the 3 preparation computers.
 
 An election Machine can make its own locked box containing its UID
-and public/private key.  Initially the software for the machine
+and public/private key pair.  Initially the software for the machine
 is copied from the internet to the Machine's thumb drive,
 the cryptographic hash of its boot file is obtained by examining
 and crosschecking multiple public web pages, the thumb
@@ -859,10 +863,10 @@ Then the Machine is run and makes its own initial locked box.
 So first the 3 election officials each make a Counting Machine,
 each Counting Machine makes 3 or 4 of the M-Boxes.  Then
 the Counting Machines exchange their UIDs and public keys and M-Box
-numbers and public keys over the local net
+UIDs and public keys over the local net
 and each writes a separate Counting Machine information
 thumb drive containing all the
-Counting Machine UIDs and public keys and all the M-Box numbers and
+Counting Machine UIDs and public keys and all the M-Box UIDs and
 public keys.  These Counting Machine information
 thumb drives are identical and are made read-only.
 
@@ -897,6 +901,10 @@ Collection Machines which add this information to their locked
 box.  From time to time thumb drives may be used to augment
 this information during the election.
 
+Registration and Collection Machines may each publish on its web page
+a cryptographic hash of its list of Private Voting Machines.
+These should all be the same, and can be checked by the public.
+
 When not being used for all this the preparation machines can
 be used to create Private Voting Machines that are not yet
 assigned to a voter, and record their UIDs and public keys
@@ -921,14 +929,15 @@ and the database can be remade at any point by executing the
 operations in the log.
 
 Election officials need not know the details above.
-They merely need to be able to follow a script that tells
-them when to create a new writable thumb drive with a particular
+They merely need to be able to follow instructions that tell
+when to create a new writable thumb drive with a particular
 label and registration card,
 when to insert a thumb drive with a particular label
-as read-only or writable, when to boot the computer,
-and when to remove a thumb drive with a particular label.
+as read-only or writable,
+when to remove a thumb drive with a particular label, and
+when to re-boot the computer with a particular thumb drive.
 A small amount of information may be input when the programs run,
-e.g., the URLs of the Collection Machines.
+e.g., the URLs of the Collection Machines and the current time.
 
 
 \section{Other Considerations}
