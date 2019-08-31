@@ -112,9 +112,11 @@
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}}
 
-\date{August 21, 2019}
+\date{August 31, 2019}
 
 \maketitle
+
+\newpage
 
 \begin{center}
 \large \bf Table of Contents
@@ -131,15 +133,17 @@ to the public.}}
 Our purpose is to specify an all-electronic election E-Election System
 suitable for replacing the current optical paper system
 used in Massachusetts.  Our system is based on the notion
-of `tamper proof software', which is software that is
-known to do what it should do.
+of `tamper-proof software', which is software that is
+known to do what it should do.  With the aid of tamper-proof
+software, we can make a verifiably secure election system without
+using paper ballots.
 
 \section{Outline}
 
 A Private Voting Machine
 (PVM) is constructed from a single thumb drive and a
 registration card.  Part of the thumb drive contains the
-tamper proof software of the PVM, part contains an encrypted
+tamper-proof software of the PVM, part contains an encrypted
 data set called a Voter Lock Box (V-Box), and the registration
 card contains a passkey that is entered on the keyboard in
 order to decrypt/encrypt the V-Box.  The software runs on
@@ -201,9 +205,9 @@ as referendums to let the voters decide issues directly
 (as is done in Switzerland).
 
 
-\section{Tamper Proof Software}
+\section{Tamper-Proof Software}
 
-Tamper Proof Software is software written in a `tamper proof'
+Tamper-Proof Software is software written in a `tamper-proof'
 programming language
 that has the following property:
 \begin{indpar}
@@ -228,11 +232,11 @@ language specification improved.
 
 The real goal is obtaining binaries that can be trusted to
 do what the source code says they should do.  The other
-property of tamper proof software is that the source code
+property of tamper-proof software is that the source code
 is published, so the world can see what it does and look
 for flaws.
 
-The simplest tamper proof programming language is a straight
+The simplest tamper-proof programming language is a straight
 forward simple assembly language.  Given this, one can write
 an interpreter for a simple interpreted language in the
 assembly language.  The interpreted language should suffice
@@ -259,7 +263,7 @@ requested individually if only some have been upgraded.}
 At least three different and independent organizations should provide
 the E-Election files.  Each organization starts with the same public
 source files.  Each organization writes its own compiler for the
-tamper proof software.  Each organization publishes on its web site
+tamper-proof software.  Each organization publishes on its web site
 the source files and binary files, and cryptographic hashes that
 can be used to verify that the software on an E-Election Machine
 matches that provided by the organization.
@@ -331,7 +335,7 @@ available to registered political parties.
 When one machine sends a message to another, the sender
 encrypts the message proper with the sender's private
 key, and attaches the unencrypted sender's UID to the
-message.  Then the sender encrypts the message with the
+encrypted message.  Then the sender encrypts this whole message with the
 receiver's public key.  The sender must have the receiver's
 public key, and the receiver must have the sender's public
 key.  Public keys are not published,
@@ -439,8 +443,9 @@ requested is returned in the reply.
 
 \end{enumerate}
 
-Requesters are always Private Voting Machines, and all replies
-are sent to just the requester.  All requests are logged.
+During voting, Registration Machines communicate only with
+Private Voting Machines, which make requests of the Registration
+Machines and receive replies.  All requests are logged.
 
 A Registration Machine may serve requests from more than
 one precinct, but the election information flow remains specific
@@ -495,7 +500,7 @@ of all Registration Machines and all Collection
 Machines used in the current election.
 \item Public keys and UIDs of the M-Boxes used in the current election.
 \item The unmarked ballot.
-\item Public keys, UIDs, and URLs of Registration Machines that are
+\item Public keys, UIDs, URLs, and status of Registration Machines that are
 obsolete or will be used in future elections.
 \item Version numbers and cryptographic hashes of different Private
 Voting Machine software versions known to the Registration Machines.
@@ -573,10 +578,10 @@ The encrypted ballot consists of:
       encrypted with the S key.
 \item The S key encrypted with the 10 K-keys according to
       Shamir's Secret Sharing scheme.
-\item The 10 K-Keys each encrypted with a
+\item The 10 K-keys, each encrypted with a
       different one of the 10 M-Box public keys.
-      Each encrypted K-Key is paired with the unencrypted
-      UID of the M-Box whose public key encrypts it.
+      Each encrypted K-key is paired with the unencrypted
+      UID of the M-Box whose public key encrypts the K-key.
 \end{enumerate}
 The encrypted ballot can be decrypted
 by any 5 M-box private keys.
@@ -633,7 +638,11 @@ by Private Voting Machines.
 \setcounter{CML-COUNTER}{\value{enumi}}
 \end{enumerate}
 
-Collection Machines receive and process two kinds of requests from
+
+During voting, Collection Machines communicate only with
+Private Voting Machines, which make requests of the Collection
+Machines and receive replies.
+Collection Machines process two kinds of requests from
 Private Voting Machines:
 \begin{enumerate}
 
@@ -641,9 +650,8 @@ Private Voting Machines:
 Ballot Submission.  The Private Voting Machine uses this to send
 its submitted ballot to the Collection Machine.  The latter accepts
 the submitted ballot if its Registration Machine certificate
-digital signatures check, the cryptographic hashes of the
-encrypted ballot check that are in the certificates check,
-and the copy of the unmarked ballot checks.
+digital signatures check, the cryptographic hashes in the certificates
+check, and the copy of the unmarked ballot checks.
 Otherwise the Collection Machine rejects the submitted
 ballot.  Note that a message not correctly encrypted with
 the private key of the submitting Private Voting Machine and the
@@ -671,8 +679,7 @@ At the end of voting Collection Machines are disconnected from
 the internet.  They then
 \begin{enumerate}
 \newcounter{CMC-COUNTER}
-\item Receive the UIDs and public keys of all Collection Machines and
-Counting Machines.
+\item Receive the UIDs and public keys of all Collection Machines.
 \item Transmit to each other their sets of accepted submitted ballots.
 \item Merge into their own set of accepted submitted ballots any
 received from other Collection Machines that they did not have previously.
@@ -701,10 +708,12 @@ which are to be submitted to the Counting Machines.
 and a set of encrypted ballots.  The header of a submitted ballot is
 everything but the encrypted ballot contained therein.  In particular
 the certificates are in the header.
+\item Receive the UIDs and public keys of all Counting Machines.
 \item Transfer the set of encrypted ballots to each Counting Machine.
 \end{enumerate}
 
-Since the Collection Machines are disconnected from the internet,
+Since the Collection Machines and Counting Machines
+are disconnected from the internet,
 data transfers are made by copying to and from thumb drives, or by
 a network physically separate from the internet.
 
@@ -812,7 +821,7 @@ current voting systems.
 The only thing easier to do in the E-Election System is verification
 that a vote bought from a stranger
 is what the buyer wants it to be.  The E-Election
-System shares this with absentee voting systems.  However, since its
+System shares this with absentee voting.  However, since its
 nearly impossible to buy large numbers of votes without being detected,
 such easier verification is not significant.
 
@@ -832,7 +841,8 @@ Private Voting Machine, at which time their old one is de-registered.
 
 Because voters can check the logs of Registration and Collection Machines
 for summary information about the votes that the voter's Private Voting Machine
-has cast, it should be very difficult to suppress votes and not be detected.
+has cast, it should be very difficult to suppress many
+votes and not be detected.
 
 \section{Election Preparation}
 
@@ -860,63 +870,62 @@ drive is set read-only with a physical switch and the cryptographic
 hash of its boot file is checked using commodity software.
 Then the Machine is run and makes its own initial locked box.
 
+The input to the preparation process consists of three thumb drives:
+\begin{enumerate}
+\item An Election Information Drive that contains the
+public keys, private keys, UIDs, URLs, and status of all Registration
+Machines and the URLs of all Collection Machines.
+\item A Private Voting Machine Information Drive that contains the
+public keys and UIDs of all Private Voting Machines.
+\end{enumerate}
+
 So first the 3 election officials each make a Counting Machine,
 each Counting Machine makes 3 or 4 of the M-Boxes.  Then
 the Counting Machines exchange their UIDs and public keys and M-Box
-UIDs and public keys over the local net
-and each writes a separate Counting Machine information
-thumb drive containing all the
-Counting Machine UIDs and public keys and all the M-Box UIDs and
-public keys.  These Counting Machine information
-thumb drives are identical and are made read-only.
-
-Then the 3 election officials each make a Collection Machine
-that takes a Counting Machine information thumb drive as input,
-and produces a Collection Machine information drive containing
-the URLs, UIDs, and public keys of all the Collection Machines.
+UIDs and public keys over the local net.  Lastly each Counting Machine
+writes two thumb drives:
+\begin{enumerate}
+\item An M-Box Information Drive that contains the public keys and
+UIDs of all the M-Boxes.  This is input to the Registration Machines
+before the election.
+\item A Counting Machines Information Drive that contains the public keys and
+UIDs of all the Counting Machines.  This is input after the election during
+counting to all Collection Machines and all Counting Machines.
+\end{enumerate}
+The pairs of thumb drives written by different Counting Machines are identical.
 
 Then the 3 election officials each make a Registration Machine
-that takes the Counting and Collection Machine information
-drives as input.  However the Registration Machines take
-a pre-prepared additional input thumb drive that contains
-their public/private keys and URLs, as these must be known
-long in advance in order to prepare Private Voting Machines.
-The Registration Machines create their own UIDs
-and produce a Registration Machine information
-drive containing the URLs, UIDs, and public keys of all Registration
-Machines.
+that takes as input the Election Information Drive and the
+M-Box Information Drive, and makes a Registration Machine
+Information Drive containing the public keys and UIDs of all
+Registration Machines.
 
-Then the Registration Machine information thumb drives are each input
-to a Collection Machine which adds the Registration Machine
-UIDs and public keys to its locked
-box, and the Collection Machine information thumb drives are each
-input to a Counting Machine which adds the Collection Machine
-UIDs and public keys to its locked box.
+Then the 3 election officials each make a Collection Machine
+that takes as input the Registration Machine Information Drive
+and makes a Collection Machine Information Drive containing
+the URLs, UIDs, and public keys of all the Collection Machines.
 
-In addition 3 identical thumb drives each containing the UIDs and public
-keys of all the initially known Private Voting Machines plus
-the unmarked ballot are
-each input to one of the Registration Machines and one of the
-Collection Machines which add this information to their locked
-box.  From time to time thumb drives may be used to augment
-this information during the election.
+Then the Collection Machine Information Drives are input to
+the Registration Machines which add Collection Machine UIDs
+and public keys to their locked boxes.
+
+At any time the Collection Machines and Registration Machines
+may input the Private Voting Machine Information Drive to
+update their locked boxes.
 
 Registration and Collection Machines may each publish on its web page
 a cryptographic hash of its list of Private Voting Machines.
-These should all be the same, and can be checked by the public.
+These should all be the same, and this sameness
+can be checked by the public.
 
 When not being used for all this the preparation machines can
 be used to create Private Voting Machines that are not yet
 assigned to a voter, and record their UIDs and public keys
 in a separate data base.  Each of these can then be given to a voter
 and its UID can be recorded in the separate database that records
-the name, address, and birthday of the voter.  From this
-data base thumb drives containing UIDs and public keys of
-Private Voting Machines can be prepared and passed to the
-Collection Machines and Registration Machines which will add
-initial or new information to their locked boxes.
+the name, address, and birthday of the voter.
 
-The preparation machines, when not being used otherwise, can
+When not being used for all this the preparation machines can
 be used to maintain the data base of Private Voting Machine
 UIDs and public keys,
 the voter data base, and the data base of
@@ -926,7 +935,10 @@ by one of the preparation machines.  These data bases should
 be log based: each is has an underlying log of all changes
 that is only added to and never otherwise modified,
 and the database can be remade at any point by executing the
-operations in the log.
+operations in the log.  From these data bases the Private
+Voting Machine Information Drives and per-count drives
+containing lists of valid Private Voting Machine UIDs
+can be prepared.
 
 Election officials need not know the details above.
 They merely need to be able to follow instructions that tell
