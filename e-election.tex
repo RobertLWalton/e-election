@@ -106,20 +106,18 @@
 
 \begin{document}
         
-\title{An Electronic Election System}
-
-\author{Robert L. Walton\thanks{Copyright 2019 Robert L. Walton.
-Permission to copy this document {\bf verbatim} is granted by the author
-to the public.}}
-
-\date{August 31, 2019}
-
-\maketitle
-
-\newpage
-
 \begin{center}
-\large \bf Table of Contents
+\Large
+{\LARGE  \bf An Electronic Election System}
+\\[2ex]
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
+Permission to copy this document {\bf verbatim} is granted by the author
+to the public.}
+\\[2ex]
+August 20, 2020
+\\[2ex]
+{\bf Table of Contents}
 \end{center}
 
 \bigskip
@@ -130,13 +128,18 @@ to the public.}}
 
 \section{Introduction}
 
-Our purpose is to specify an all-electronic election E-Election System
+Our purpose is to specify an all-electronic election (E-Election) System
 suitable for replacing the current optical paper system
 used in Massachusetts.  Our system is based on the notion
 of `tamper-proof software', which is software that is
 known to do what it should do.  With the aid of tamper-proof
 software, we can make a verifiably secure election system without
 using paper ballots.
+
+Tamper-proof software may have other applications.
+It could be of use with the existing optical paper system,
+for example, to ensure that the software within the voting
+machines does what it is supposed to do.
 
 \section{Outline}
 
@@ -165,7 +168,7 @@ are replicated with different officials running different
 replicas.  Counting Machines also use separate
 thumb drives containing master lock boxes
 (M-Boxes), and a Counting Machine requires
-5 out of 10 election officials to cooperatively
+any 5 out of 10 election officials to cooperatively
 provide decrypted M-Boxes in order to decrypt ballots and
 produce final counts.
 
@@ -175,11 +178,12 @@ a particular election for a particular
 precinct form a virtual private network that is disconnected from
 the rest of the world, the internet in particular.  This E-Election
 network works by encrypting all messages with the private key of the
-sender and the public key of the receiver, and distributing public
-keys of Private Voting Machines only by directly copying them from
-thumb drives.  Messages to and from Private Voting Machines do pass
-through the internet, but as they are encrypted by keys that never
-pass through the internet, the E-Election network is effectively
+sender and the public key of the receiver, and distributing
+keys only by directly copying them from
+thumb drives, with the exception of public keys of Registration and
+Collection Machines.  Messages to and from Private Voting Machines do pass
+through the internet, but as they are encrypted by PVM keys that never
+pass through the internet, the E-Election network is informationally
 disconnected from the internet.
 
 Each precinct has its own separate set of Counting Machines and M-Boxes,
