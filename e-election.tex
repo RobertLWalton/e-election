@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-August 20, 2020
+August 21, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -201,13 +201,26 @@ The main advantages of the E-Election System are:
 \item Substantially reduced election staff manpower.
 \item Substantially decreased cost of running an election.
 \item Substantially increased ease of voting.
+\item Somewhat better voter privacy than paper absentee balloting.
 \end{enumerate}
 
 Hopefully these advantages will eventually lead to
 greater voter turnout and more frequent use of elections such
-as referendums to let the voters decide issues directly
+as referendums that let the voters decide issues directly
 (as is done in Switzerland).
 
+\section{Disadvantages}
+
+The main disadvantages of the E-Election System are:
+\begin{enumerate}
+\item Requires voters to have basic computer literacy.
+\item Requires computer manufacturers to provide secure
+      bootstap.
+\item Requires voters to report by election date
+      if \underline{both} their
+      thumb drive and registration card are lost or stolen
+      together.
+\end{enumerate}
 
 \section{Tamper-Proof Software}
 
@@ -236,8 +249,8 @@ language specification improved.
 
 The real goal is obtaining binaries that can be trusted to
 do what the source code says they should do.  The other
-property of tamper-proof software is that the source code
-is published, so the world can see what it does and look
+requirement on tamper-proof software is that the source code
+be published, so the world can see what it does and look
 for flaws.
 
 The simplest tamper-proof programming language is a straight
@@ -280,7 +293,7 @@ operating systems.  Results can be compared with the hashes on
 all the organization web sites.
 
 Only the cryptographic hash of the boot file needs to be checked,
-as it will contain cryptographic hashes of the other files and it will check
+as it can contain cryptographic hashes of the other files and it will check
 the other files before they are used in running the machine.
 To avoid hacking by commodity software during a cryptographic hash check,
 the E-Election Machine thumb drive should have a physical read-only
