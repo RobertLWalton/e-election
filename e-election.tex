@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-August 21, 2020
+August 26, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -304,10 +304,20 @@ the same thumb drive as their associated machine's locked box, and
 therefore cannot be substituted by switching thumb drives.
 
 Private Voting Machines would be created by the town clerk.
+
 Software updates for the Private Voting Machines are distributed
-by the Registration Machines.  Therefore Private Voting Machines
-would only need to have their file cryptographic hashes checked if the voter
-suspected that someone physically tampered with the machine's thumb drive.
+by the Registration Machines.  Specifically, the Private Voting
+Machines contain in their locked boxes the public keys of
+the organizations which provide their software.  Registration machines
+can inform a Private Voting Machine when an update is available,
+and then the Private Voting Machine can get and compare three copies of the
+update from three different independent
+software providers obtained from three different Registration Machines.
+
+At any time a voter can check their Private Voting Machine
+software file cryptographic hashes, but this should not be
+necessary unless the voter
+suspects that someone has physically tampered with the machine's thumb drive.
 
 
 
