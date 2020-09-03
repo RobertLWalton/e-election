@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-August 26, 2020
+September 3, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -887,6 +887,98 @@ of legitimate voters.  But because registration is not a 1-day-and-done
 affair, it is much more difficult to refuse registration than it is
 to refuse a voter at the polls.
 
+\section{Hacking, Hardware, and Profit}
+
+So how does one hack this e-election system?
+
+The software, Registration Machines, Collection Machines,
+and Couunting Machines are all in independent triplets, so
+hacking these without being detected is very difficult.
+
+Loading deviant software into a PVM thumb drive is easy
+for the voter to detect: they just use standard software,
+widely available from multiple sources, to compute
+the cryptographic hash of the software's boot file, and
+compare it with the hashes published by the software
+organizations.
+
+However, modern hardware contains a lot of embedded micro-code and
+BIOS code, so maybe this can be hacked.
+
+You cannot hack the keyboard, as keyboard output is displayed on
+the screen and keyboard mistakes are immediately obvious.  You
+cannot hack the net interface for the e-election system does not
+trust the net and the only thing a hacked net can do is deny
+service, which is immediately obvious.  You cannot hack the
+display computer, for it has no access to an outside source of
+information and could not be adapted to a particular election
+or screen format after the display was manufactured.
+
+This leave the computer BIOS and the micro-code in the thumb
+drive itself.
+
+Perhaps the only good chance one has of having an undetected, 
+election effecting hack is to hack the BIOS of a popular computer
+so that when it is asked to boot PVM software it instead goes out
+over the web and gets a deviant copy.  The deviant copy them maintains
+two locked boxes, one reflecting the voter's intent, and one reflecting
+the hacker's intent.  To avoid detection, the thumb drive must be
+kept as it would be for the voter, so the deviant locked box must
+be kept on the same web server that provided the deviant software.
+
+If some time after voting the voter manages to load non-deviant
+software, the voter might use it to check with the Collection
+Machines to see if the vote was properly collected, and thereby
+discover the hack.
+
+The testing described in section \ref{TESTING} (page \pageref{TESTING})
+will detect computers hacked in this manner.
+
+The micro-code inside the PVM thumb drive can be hacked
+in a manner similar to the compute BIOS.  As the thumb drives
+are purchased by the election officials, its likely that there
+will be fewer thumb drive vendors than there are computer vendors
+involved in an e-election.
+The thumb drive situation is similar to the current
+Massachusetts voting system, where the paper vote counting ballot boxes
+are purchased by election officials and might be hacked.
+
+In any case hacks of this kind are likely to be detected.
+Of course finding that some popular computer or a thumb drive
+vendor has been hacked in this
+manner will be a scandal, but then finding that your paper election
+ballot boxes have been similarly hacked would be a similar scandal.
+
+In the case of a hacked paper ballot election, one counts the
+ballots by hand.  In the case of a hacked e-election, one simply
+repeats the vote.  Its probably much cheaper to repeat the vote
+than to count the election by hand, but it requires more
+participation by voters.  In either case these events are likely
+to be annoying but rare.
+
+Small computers big enough to run PVM software can be integrated
+into the thumb drive resulting in a voting unit with special
+shape and markings.  This eliminates issues with BIOS and computer
+vendors and produces that same situation as we now have with
+Massachusetts paper ballots, namely that there is computerized
+hardware purchased by election officials that can be hacked but
+the hacks can be detected.
+
+In the long run such hardware should be manufactured in an
+inspected facility by a consortium of manufacturers and governments.
+
+So how can a private company profit from such election systems?
+In the current Massachusetts system, only the maker of paper ballot
+boxes profits from the election proper, while in the e-election
+system only the maker of the thumb drives or integrated voting unit
+would profit from the election proper.  Here we are ignoring
+anciliary actions, such as voter registration accounting, or in
+the current election system, voter checkin/checkout, which
+likely involves private companies.
+
+
+
+
 \section{Election Preparation}
 
 There are many ways to prepare the various Machines needed in an election,
@@ -894,7 +986,7 @@ and the one we outline here is but an example.
 
 The town holding the election has 3 preparation computers that are
 connected to each other by a physical network but which are not
-physically connected to the internet.  To avoid hacked hardware
+physically connected to the internet.  To detect hacked hardware
 produced by a single vendor, the 3 computers are from different
 computer vendors.  Each has a good hardware random number generator
 (as is built into most modern processors).
@@ -913,7 +1005,7 @@ drive is set read-only with a physical switch and the cryptographic
 hash of its boot file is checked using commodity software.
 Then the Machine is run and makes its own initial locked box.
 
-The input to the preparation process consists of three thumb drives:
+The input to the preparation process consists of two thumb drives:
 \begin{enumerate}
 \item An Election Information Drive that contains the
 public keys, private keys, UIDs, URLs, and status of all Registration
@@ -922,11 +1014,16 @@ Machines and the URLs of all Collection Machines.
 public keys and UIDs of all Private Voting Machines.
 \end{enumerate}
 
-So first the 3 election officials each make a Counting Machine,
-each Counting Machine makes 3 or 4 of the M-Boxes.  Then
-the Counting Machines exchange their UIDs and public keys and M-Box
-UIDs and public keys over the local net.  Lastly each Counting Machine
-writes two thumb drives:
+First the 3 election officials each make a Counting Machine, and
+each uses their Counting Machine to make 3 or 4 of the M-Boxes.  There
+is no election specific input to making these Counting Machines, with
+each generating the election specific random numbers that it needs.
+
+Then the Counting Machines exchange their UIDs and public keys and M-Box
+UIDs and public keys over the local net.
+
+Lastly each Counting Machine
+writes one thumb drive for each of its M-boxes plus two more thumb drives:
 \begin{enumerate}
 \item An M-Box Information Drive that contains the public keys and
 UIDs of all the M-Boxes.  This is input to the Registration Machines
@@ -935,22 +1032,18 @@ before the election.
 UIDs of all the Counting Machines.  This is input after the election during
 counting to all Collection Machines and all Counting Machines.
 \end{enumerate}
-The pairs of thumb drives written by different Counting Machines are identical.
-
-Then the 3 election officials each make a Registration Machine
-that takes as input the Election Information Drive and the
-M-Box Information Drive, and makes a Registration Machine
-Information Drive containing the public keys and UIDs of all
-Registration Machines.
+These last two thumb drives written by different Counting Machines
+are identical.
 
 Then the 3 election officials each make a Collection Machine
-that takes as input the Registration Machine Information Drive
+that takes as input the Election Information Drive
 and makes a Collection Machine Information Drive containing
 the URLs, UIDs, and public keys of all the Collection Machines.
 
-Then the Collection Machine Information Drives are input to
-the Registration Machines which add Collection Machine UIDs
-and public keys to their locked boxes.
+Then the 3 election officials each make a Registration Machine
+that takes as input the Election Information Drive, the
+M-Box Information Drive, and the Collection Machine Information
+Drive.
 
 At any time the Collection Machines and Registration Machines
 may input the Private Voting Machine Information Drive to
@@ -979,9 +1072,9 @@ be log based: each is has an underlying log of all changes
 that is only added to and never otherwise modified,
 and the database can be remade at any point by executing the
 operations in the log.  From these data bases the Private
-Voting Machine Information Drives and per-count drives
+Voting Machine Information Drives and drives
 containing lists of valid Private Voting Machine UIDs
-can be prepared.
+for each type of count can be prepared.
 
 Election officials need not know the details above.
 They merely need to be able to follow instructions that tell
