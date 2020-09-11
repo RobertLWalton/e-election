@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-September 3, 2020
+September 10, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -377,7 +377,8 @@ display the locked box (see \pageref{DEVIANT-SOFTWARE} above).
 Note that Counting Machines are never given Private Voting
 Machine UIDs or public keys, and can never associate an
 encrypted ballot with a particular Private Voting Machine.
-And only Counting Machines are given decrypted M-Boxes.
+And only Counting Machines are given decrypted M-Boxes, so
+only they can decrypt ballots.
 
 \section{Registration Machine Details}
 
@@ -396,7 +397,7 @@ current election:
 \item Public keys and UIDs of all Registration Machines, all Collection
 Machines, and all M-Boxes.
 \item URLs of all Registration Machines and all Collection Machines.
-\item The unmarked ballot.
+\item The unmarked, unencrypted ballot.
 \item UIDs and associated public keys of all Private Voting
 Machines.  This includes de-registered and test Private Voting
 Machines, as Registration Machines do not know which Private Voting
@@ -491,6 +492,23 @@ slated for use in future elections, and if successful, will
 update their locked box according the Request for Ballot
 replies of these Registration Machines.
 
+When a PVM makes are request of a Registration Machine for
+a particular election, the request must contain a copy of
+the last certificate received by the PVM for that election
+from that Registration Machine, if any.  If it does not,
+requests for information will be allowed, with a warning
+message, but requests for a new certificate will be dis-allowed.
+Thus if a PVM is duplicated and one copy votes and receives certificates
+from a quorum of Registration Machines,
+the other copy will be notified when it attempts to access the
+Registration Machines, and will not be able to change the vote.
+Of course,
+if this situation is not in the voter's interest, the voter
+may get the registrar to de-register the PVM and give the voter
+a new PVM.  Voters may make copies of their PVM without issues
+as long as they stick to just one of these copies for each
+separate election.
+
 \section{Private Voting Machine Details}
 
 A Private Voting Machine is run by a single voter
@@ -578,7 +596,7 @@ Private Voting Machine using its private key.
 A voter may change her/his mind and re-vote.  The last ballot
 he/she casts counts.  This is rather important in an election,
 as on the one hand a voter may receive new information and
-want to change the vote, and on the other hand to avoid system
+want to change their vote, and on the other hand to avoid system
 congestion it is convenient to have votes strung out over time.
 
 \section{Ballot Encryption Details}
@@ -649,7 +667,7 @@ current election:
 \newcounter{CML-COUNTER}
 \item The public/private key pair of the Collection Machine.
 \item UIDs and public keys of all Registration Machines.
-\item The unmarked ballot.
+\item The unmarked, unencrypted ballot for diagnostic purposes.
 \item UIDs and associated public keys of all Private Voting
 Machines.  This includes de-registered and test Private Voting
 Machines, as before the election ends the
@@ -806,7 +824,9 @@ as an aid to testing \pagref{TESTING}.
 Write-ins can be tabulated by the Counting Machines in a manner
 generally similar to regular votes.  A write-in is a piece of
 text, and counts can be given each piece of text and for groups
-of similar pieces of text.
+of similar pieces of text.  Normally all write-in votes can
+be lumped together as there are not enough to change the outcome
+of an election regardless of which candidates they name.
 
 \section{Testing}\label{TESTING}
 
@@ -864,10 +884,10 @@ If buyer X buys the vote of voter Y, X has no guarentee that
 Y will not vote differently later.  X could take either the
 registration card or thumb drive from Y, but then this is
 physical evidence of a crime unless X and Y know each other
-and Y assets they gave the card or drive to X.
+and Y asserts they gave the card or drive to X.
 
 So although no voting system enables large scale purchase of
-votes, the E-Election System make it even harder to vote purchases
+votes, the E-Election System make it even harder for vote purchases
 to occur between people who do not know and trust each other.
 
 
@@ -907,14 +927,14 @@ BIOS code, so maybe this can be hacked.
 
 You cannot hack the keyboard, as keyboard output is displayed on
 the screen and keyboard mistakes are immediately obvious.  You
-cannot hack the net interface for the e-election system does not
+cannot hack the net interface, as the e-election system does not
 trust the net and the only thing a hacked net can do is deny
 service, which is immediately obvious.  You cannot hack the
 display computer, for it has no access to an outside source of
 information and could not be adapted to a particular election
 or screen format after the display was manufactured.
 
-This leave the computer BIOS and the micro-code in the thumb
+This leaves the computer BIOS and the micro-code in the thumb
 drive itself.
 
 Perhaps the only good chance one has of having an undetected, 
@@ -923,8 +943,8 @@ so that when it is asked to boot PVM software it instead goes out
 over the web and gets a deviant copy.  The deviant copy them maintains
 two locked boxes, one reflecting the voter's intent, and one reflecting
 the hacker's intent.  To avoid detection, the thumb drive must be
-kept as it would be for the voter, so the deviant locked box must
-be kept on the same web server that provided the deviant software.
+kept as it would be for the voter, so the hacker's locked box must
+be kept on a deviant web server.
 
 If some time after voting the voter manages to load non-deviant
 software, the voter might use it to check with the Collection
@@ -935,7 +955,7 @@ The testing described in section \ref{TESTING} (page \pageref{TESTING})
 will detect computers hacked in this manner.
 
 The micro-code inside the PVM thumb drive can be hacked
-in a manner similar to the compute BIOS.  As the thumb drives
+in a manner similar to the computer's BIOS.  As the thumb drives
 are purchased by the election officials, its likely that there
 will be fewer thumb drive vendors than there are computer vendors
 involved in an e-election.
@@ -970,11 +990,11 @@ inspected facility by a consortium of manufacturers and governments.
 So how can a private company profit from such election systems?
 In the current Massachusetts system, only the maker of paper ballot
 boxes profits from the election proper, while in the e-election
-system only the maker of the thumb drives or integrated voting unit
+system only the maker of the thumb drives or integrated voting units
 would profit from the election proper.  Here we are ignoring
 anciliary actions, such as voter registration accounting, or in
 the current election system, voter checkin/checkout, which
-likely involves private companies.
+may involve hardware or software provided by private companies.
 
 
 
@@ -1085,7 +1105,7 @@ as read-only or writable,
 when to remove a thumb drive with a particular label, and
 when to re-boot the computer with a particular thumb drive.
 A small amount of information may be input when the programs run,
-e.g., the URLs of the Collection Machines and the current time.
+e.g., the current time.
 
 
 \section{Other Considerations}
