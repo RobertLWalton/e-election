@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-September 10, 2020
+September 12, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -498,10 +498,18 @@ the last certificate received by the PVM for that election
 from that Registration Machine, if any.  If it does not,
 requests for information will be allowed, with a warning
 message, but requests for a new certificate will be dis-allowed.
+Furthermore, in order to make a ballot official, a PVM must
+get a quorum (over half) of all Registration Machines to certify
+the ballot.
+
 Thus if a PVM is duplicated and one copy votes and receives certificates
 from a quorum of Registration Machines,
-the other copy will be notified when it attempts to access the
-Registration Machines, and will not be able to change the vote.
+the other copy will be notified when it attempts to access any
+Registration Machine in that quorum.
+This other copy will not be able to change the vote, because
+it would need a quorum of Registration Machines to certify the
+change, and that is not possible given the rules of the last paragraph.
+
 Of course,
 if this situation is not in the voter's interest, the voter
 may get the registrar to de-register the PVM and give the voter
@@ -880,14 +888,14 @@ current voting systems.
 
 In addition the E-Election System has the property that a voter
 can vote multiple times, with only the last vote counting.
-If buyer X buys the vote of voter Y, X has no guarentee that
+If buyer X buys the vote of voter Y, X has no guarantee that
 Y will not vote differently later.  X could take either the
 registration card or thumb drive from Y, but then this is
 physical evidence of a crime unless X and Y know each other
 and Y asserts they gave the card or drive to X.
 
 So although no voting system enables large scale purchase of
-votes, the E-Election System make it even harder for vote purchases
+votes, the E-Election System makes it even harder for vote purchases
 to occur between people who do not know and trust each other.
 
 
@@ -912,7 +920,7 @@ to refuse a voter at the polls.
 So how does one hack this e-election system?
 
 The software, Registration Machines, Collection Machines,
-and Couunting Machines are all in independent triplets, so
+and Counting Machines are all in independent triplets, so
 hacking these without being detected is very difficult.
 
 Loading deviant software into a PVM thumb drive is easy
@@ -930,7 +938,9 @@ the screen and keyboard mistakes are immediately obvious.  You
 cannot hack the net interface, as the e-election system does not
 trust the net and the only thing a hacked net can do is deny
 service, which is immediately obvious.  You cannot hack the
-display computer, for it has no access to an outside source of
+display computer,\footnote{Yes, your display has a (very small)
+computer inside it, for it can present a menu and accept commands.}
+for it has no access to an outside source of
 information and could not be adapted to a particular election
 or screen format after the display was manufactured.
 
@@ -940,7 +950,7 @@ drive itself.
 Perhaps the only good chance one has of having an undetected, 
 election effecting hack is to hack the BIOS of a popular computer
 so that when it is asked to boot PVM software it instead goes out
-over the web and gets a deviant copy.  The deviant copy them maintains
+over the web and gets a deviant copy.  The deviant copy then maintains
 two locked boxes, one reflecting the voter's intent, and one reflecting
 the hacker's intent.  To avoid detection, the thumb drive must be
 kept as it would be for the voter, so the hacker's locked box must
@@ -978,21 +988,23 @@ to be annoying but rare.
 
 Small computers big enough to run PVM software can be integrated
 into the thumb drive resulting in a voting unit with special
-shape and markings.  This eliminates issues with BIOS and computer
-vendors and produces that same situation as we now have with
+shape and markings.\footnote{Probably costing at most \$25.}
+This eliminates issues with BIOS and computer
+vendors and produces the same situation as we now have with
 Massachusetts paper ballots, namely that there is computerized
 hardware purchased by election officials that can be hacked but
 the hacks can be detected.
 
-In the long run such hardware should be manufactured in an
-inspected facility by a consortium of manufacturers and governments.
+In the long run all election hardware should be manufactured in an
+inspected facility by a consortium of manufacturers and governments,
+and should run only tamper-proof software.
 
 So how can a private company profit from such election systems?
 In the current Massachusetts system, only the maker of paper ballot
 boxes profits from the election proper, while in the e-election
 system only the maker of the thumb drives or integrated voting units
 would profit from the election proper.  Here we are ignoring
-anciliary actions, such as voter registration accounting, or in
+ancillary actions, such as voter registration accounting, or in
 the current election system, voter checkin/checkout, which
 may involve hardware or software provided by private companies.
 
