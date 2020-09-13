@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-September 12, 2020
+September 13, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -215,7 +215,7 @@ The main disadvantages of the E-Election System are:
 \begin{enumerate}
 \item Requires voters to have basic computer literacy.
 \item Requires computer manufacturers to provide secure
-      bootstap.
+      bootstrap.
 \item Requires voters to report by election date
       if \underline{both} their
       thumb drive and registration card are lost or stolen
@@ -1016,9 +1016,14 @@ may involve hardware or software provided by private companies.
 There are many ways to prepare the various Machines needed in an election,
 and the one we outline here is but an example.
 
-The town holding the election has 3 preparation computers that are
-connected to each other by a local network but which are not
-physically connected to the internet.  To detect hacked hardware
+The town holding the election has 3 preparation computers
+that are connected to each other by a local network but which are not
+physically connected to the internet.%
+\footnote{If there are 3 Registration Machines,
+a PVM would have to contact a quorum of 2 Registration Machines to
+certify a vote.  If there were 4 or 5 Registration Machines,
+a quorum would be 3 Registration Machines.}
+To detect hacked hardware
 produced by a single vendor, the 3 computers are from different
 computer vendors.  Each has a good hardware random number generator
 (as is built into most modern processors).
@@ -1031,7 +1036,7 @@ the 3 preparation computers.
 Initially the software for each election machine
 is copied from the internet to the Machine's thumb drive,
 the cryptographic hash of its boot file is obtained by examining
-and crosschecking multiple public web pages, the thumb
+and crosschecking multiple independent public web pages, the thumb
 drive is set read-only with a physical switch and the cryptographic
 hash of its boot file is checked using commodity software.
 Then the Machine is run and makes its own initial locked box
@@ -1049,7 +1054,7 @@ public keys and UIDs of all Private Voting Machines.
 \end{enumerate}
 The Election Information Drive is specific to the current election,
 but the other two Information Drives contain information that
-spans elections and that is updated by addition and subtraction
+spans elections and is updated by addition and subtraction
 from one election to the next.
 
 First the 3 election officials each make a Counting Machine, and
@@ -1067,7 +1072,8 @@ writes one thumb drive for each of its M-boxes plus two more thumb drives:
 UIDs of all the M-Boxes.  This is input to the Registration Machines
 before the election.
 \item A Counting Information Drive that contains the public keys and
-UIDs of all the Counting Machines.  This is input after the election during
+UIDs of all the Counting Machines.
+This is input \underline{after} the election during
 counting to all Collection Machines and all Counting Machines.
 \end{enumerate}
 These last two thumb drives written by different Counting Machines
@@ -1079,8 +1085,16 @@ and makes a Collection Information Drive containing
 the URLs, UIDs, and public keys of all the Collection Machines.
 
 Then the 3 election officials each make a Registration Machine
-that takes as input the Registration, Election, M-Box, and Collection
+that takes as input the Registration, M-Box, and Collection
 Information Drives.
+
+Note that Registration Machines never communicate with each other
+or with Collection Machines, except via the Collection Information
+Drive input when a Registration Machine is made.
+
+Note that Collection Machines never communicate with each other
+before the end of the election
+except when making the Collection Information Drive.
 
 At any time the Collection Machines and Registration Machines
 may input the Private Voting Information Drive to
@@ -1088,7 +1102,8 @@ update their locked boxes.
 
 Registration and Collection Machines may each publish on its web page
 a cryptographic hash of its list of Private Voting Machines.
-These should all be the same, and this sameness
+When all machines are up-to-date
+these hashes should all be the same, and this sameness
 can be checked by the public.
 
 When not being used for all this the preparation machines can
