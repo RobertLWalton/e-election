@@ -1017,7 +1017,7 @@ There are many ways to prepare the various Machines needed in an election,
 and the one we outline here is but an example.
 
 The town holding the election has 3 preparation computers that are
-connected to each other by a physical network but which are not
+connected to each other by a local network but which are not
 physically connected to the internet.  To detect hacked hardware
 produced by a single vendor, the 3 computers are from different
 computer vendors.  Each has a good hardware random number generator
@@ -1028,27 +1028,33 @@ officials, each responsible for 1 Registration Machine, 1 Collection
 Machine, and 1 Counting Machine.  They each use a different one of
 the 3 preparation computers.
 
-An election Machine can make its own locked box containing its UID
-and public/private key pair.  Initially the software for the machine
+Initially the software for each election machine
 is copied from the internet to the Machine's thumb drive,
 the cryptographic hash of its boot file is obtained by examining
 and crosschecking multiple public web pages, the thumb
 drive is set read-only with a physical switch and the cryptographic
 hash of its boot file is checked using commodity software.
-Then the Machine is run and makes its own initial locked box.
+Then the Machine is run and makes its own initial locked box
+containing its UID and public/private key pair.
 
-The input to the preparation process consists of two thumb drives:
+The input to the preparation process consists of three thumb drives:
 \begin{enumerate}
-\item An Election Information Drive that contains the
+\item A Registration Information Drive that contains the
 public keys, private keys, UIDs, URLs, and status of all Registration
-Machines and the URLs of all Collection Machines.
-\item A Private Voting Machine Information Drive that contains the
+Machines.
+\item An Election Information Drive that contains the
+the URLs of all Collection Machines.
+\item A Private Voting Information Drive that contains the
 public keys and UIDs of all Private Voting Machines.
 \end{enumerate}
+The Election Information Drive is specific to the current election,
+but the other two Information Drives contain information that
+spans elections and that is updated by addition and subtraction
+from one election to the next.
 
 First the 3 election officials each make a Counting Machine, and
 each uses their Counting Machine to make 3 or 4 of the M-Boxes.  There
-is no election specific input to making these Counting Machines, with
+is no input to making these Counting Machines, with
 each generating the election specific random numbers that it needs.
 
 Then the Counting Machines exchange their UIDs and public keys and M-Box
@@ -1060,7 +1066,7 @@ writes one thumb drive for each of its M-boxes plus two more thumb drives:
 \item An M-Box Information Drive that contains the public keys and
 UIDs of all the M-Boxes.  This is input to the Registration Machines
 before the election.
-\item A Counting Machines Information Drive that contains the public keys and
+\item A Counting Information Drive that contains the public keys and
 UIDs of all the Counting Machines.  This is input after the election during
 counting to all Collection Machines and all Counting Machines.
 \end{enumerate}
@@ -1068,17 +1074,16 @@ These last two thumb drives written by different Counting Machines
 are identical.
 
 Then the 3 election officials each make a Collection Machine
-that takes as input the Election Information Drive
-and makes a Collection Machine Information Drive containing
+that takes as input the Registration and Election Information Drives
+and makes a Collection Information Drive containing
 the URLs, UIDs, and public keys of all the Collection Machines.
 
 Then the 3 election officials each make a Registration Machine
-that takes as input the Election Information Drive, the
-M-Box Information Drive, and the Collection Machine Information
-Drive.
+that takes as input the Registration, Election, M-Box, and Collection
+Information Drives.
 
 At any time the Collection Machines and Registration Machines
-may input the Private Voting Machine Information Drive to
+may input the Private Voting Information Drive to
 update their locked boxes.
 
 Registration and Collection Machines may each publish on its web page
@@ -1108,14 +1113,19 @@ Voting Machine Information Drives and drives
 containing lists of valid Private Voting Machine UIDs
 for each type of count can be prepared.
 
-Election officials need not know the details above.
-They merely need to be able to follow instructions that tell
+Note that most information is specific to a particular election
+and a particular precinct.  The maximum size of a precinct in
+the United States is currently less than 3,000 voters, so there
+is no need to provide for large data bases.
+
+Election officials only need to know the information above
+and be able to follow a check list that tells
+when to re-boot machine thumb drives,
 when to create a new writable thumb drive with a particular
-label and registration card,
+label,
 when to insert a thumb drive with a particular label
-as read-only or writable,
-when to remove a thumb drive with a particular label, and
-when to re-boot the computer with a particular thumb drive.
+as read-only or writable, and
+when to remove a thumb drive with a particular label.
 A small amount of information may be input when the programs run,
 e.g., the current time.
 
