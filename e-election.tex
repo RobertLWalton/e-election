@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-September 13, 2020
+September 17, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -492,7 +492,7 @@ slated for use in future elections, and if successful, will
 update their locked box according the Request for Ballot
 replies of these Registration Machines.
 
-When a PVM makes are request of a Registration Machine for
+When a PVM makes a request of a Registration Machine for
 a particular election, the request must contain a copy of
 the last certificate received by the PVM for that election
 from that Registration Machine, if any.  If it does not,
@@ -1033,6 +1033,11 @@ officials, each responsible for 1 Registration Machine, 1 Collection
 Machine, and 1 Counting Machine.  They each use a different one of
 the 3 preparation computers.
 
+Registration Machines pre-exist the election.
+A new Registration Machine can be made from time to time
+by means similar to those described here.  Assume each election
+official has one Registration Machine.
+
 Initially the software for each election machine
 is copied from the internet to the Machine's thumb drive,
 the cryptographic hash of its boot file is obtained by examining
@@ -1045,7 +1050,7 @@ containing its UID and public/private key pair.
 The input to the preparation process consists of three thumb drives:
 \begin{enumerate}
 \item A Registration Information Drive that contains the
-public keys, private keys, UIDs, URLs, and status of all Registration
+public keys, UIDs, URLs, and status of all Registration
 Machines.
 \item An Election Information Drive that contains the
 the URLs of all Collection Machines.
@@ -1084,17 +1089,18 @@ that takes as input the Registration and Election Information Drives
 and makes a Collection Information Drive containing
 the URLs, UIDs, and public keys of all the Collection Machines.
 
-Then the 3 election officials each make a Registration Machine
-that takes as input the Registration, M-Box, and Collection
+Then the 3 election officials each update their Registration Machine
+using as input the Registration, M-Box, and Collection
 Information Drives.
 
 Note that Registration Machines never communicate with each other
-or with Collection Machines, except via the Collection Information
-Drive input when a Registration Machine is made.
+or with Collection Machines, except via the Registration and
+Collection Information Drives before the election starts.
 
 Note that Collection Machines never communicate with each other
 before the end of the election
-except when making the Collection Information Drive.
+except when making the Collection Information Drive before the
+election starts.
 
 At any time the Collection Machines and Registration Machines
 may input the Private Voting Information Drive to
