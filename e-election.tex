@@ -65,7 +65,7 @@
     % Change notice.
 
 \newcommand{\figref}[1]{\ref{#1}$\,^{p\,\pageref{#1}}$}
-\newcommand{\pagref}[1]{(see page~\pageref{#1} below)}
+\newcommand{\pagref}[1]{(see page~\pageref{#1})}
 \newcommand{\pagnote}[1]{$\,^{p\,\pageref{#1}}$}
 
 \newcommand{\EOL}{\penalty \exhyphenpenalty}
@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-September 17, 2020
+September 21, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -199,7 +199,7 @@ their public keys are shared across multiple elections.
 The main advantages of the E-Election System are:
 \begin{enumerate}
 \item Substantially reduced election staff manpower.
-\item Substantially decreased cost of running an election.
+\item Substantially decreased cost of running frequent elections.
 \item Substantially increased ease of voting.
 \item Somewhat better voter privacy than paper absentee balloting.
 \end{enumerate}
@@ -371,8 +371,8 @@ though the system is designed so that publishing public
 keys will not compromise security or essential privacy,
 and a voter can find out the public keys of Registration
 Machines and Collection Machines by examining his/her locked
-box using deviant software to decrypt and
-display the locked box (see \pageref{DEVIANT-SOFTWARE} above).
+box using deviant software \pagref{DEVIANT-SOFTWARE} to decrypt and
+display the locked box.
 
 Note that Counting Machines are never given Private Voting
 Machine UIDs or public keys, and can never associate an
@@ -502,7 +502,7 @@ Furthermore, in order to make a ballot official, a PVM must
 get a quorum (over half) of all Registration Machines to certify
 the ballot.
 
-Thus if a PVM is duplicated and one copy votes and receives certificates
+Thus if a PVM is duplicated and then one copy votes and receives certificates
 from a quorum of Registration Machines,
 the other copy will be notified when it attempts to access any
 Registration Machine in that quorum.
@@ -710,9 +710,9 @@ Private Voting Machines:
 \item
 Ballot Submission.  The Private Voting Machine uses this to send
 its submitted ballot to the Collection Machine.  The latter accepts
-the submitted ballot if its Registration Machine certificate
-digital signatures check, the cryptographic hashes in the certificates
-check, and the copy of the unmarked ballot checks.
+the submitted ballot if its digital certificate signatures check,
+its certificate cryptographic ballot hashes check,
+and the copy of the unmarked ballot checks.
 Otherwise the Collection Machine rejects the submitted
 ballot.  Note that a message not correctly encrypted with
 the private key of the submitting Private Voting Machine and the
@@ -754,7 +754,8 @@ produce vote counts.  More than one vote count will be produced:
 e.g., a count of initial valid votes, a re-count that includes
 allowed provisional votes, a re-count that includes test votes.
 The Collection Machine's job is to prepare for each vote count
-the set of valid ballots and submit this set to the Counting Machines.
+the set of valid ballots and submit the encrypted ballots in
+this set to the Counting Machines.
 To do this the Collection Machines:
 
 \begin{enumerate}
@@ -764,7 +765,7 @@ Private Voting Machines that are valid for the vote count.
 E.g., for the initial vote count a Private Voting Machine would
 be valid unless it is de-registered, provisional, or a test machine.
 \item Create a set of valid ballots (defined below)
-which are to be submitted to the Counting Machines.
+whose encrypted ballot parts are to be submitted to the Counting Machines.
 \item Separated this set of valid ballots into a set of ballot headers
 and a set of encrypted ballots.  The header of a submitted ballot is
 everything but the encrypted ballot contained therein.  In particular
@@ -981,10 +982,11 @@ ballot boxes have been similarly hacked would be a similar scandal.
 
 In the case of a hacked paper ballot election, one counts the
 ballots by hand.  In the case of a hacked e-election, one simply
-repeats the vote.  Its probably much cheaper to repeat the vote
+repeats the vote with somewhat different hardware.
+It may be cheaper to repeat the vote
 than to count the election by hand, but it requires more
 participation by voters.  In either case these events are likely
-to be annoying but rare.
+to be very annoying but very rare.
 
 Small computers big enough to run PVM software can be integrated
 into the thumb drive resulting in a voting unit with special
@@ -1047,7 +1049,8 @@ hash of its boot file is checked using commodity software.
 Then the Machine is run and makes its own initial locked box
 containing its UID and public/private key pair.
 
-The input to the preparation process consists of three thumb drives:
+The input to the preparation process consists of the pre-existing
+Registration Machines and three thumb drives:
 \begin{enumerate}
 \item A Registration Information Drive that contains the
 public keys, UIDs, URLs, and status of all Registration
