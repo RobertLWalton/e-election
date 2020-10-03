@@ -111,11 +111,11 @@
 {\LARGE  \bf An Electronic Election System}
 \\[2ex]
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
-Robert L. Walton\footnote[1]{Copyright 2019 Robert L. Walton.
+Robert L. Walton\footnote[1]{Copyright 2020 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-September 21, 2020
+October 3, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -194,6 +194,23 @@ specific to a particular election, but Registration Machines
 and Private Voting Machines and
 their public keys are shared across multiple elections.
 
+The genesis of this E-Election System is simply the author's
+realization that tamper-proof software could be made and
+combined with the notions of thumb drives as Machines and
+a virtual private network whose keys were distributed by
+hand and not over the internet to make a secure E-Election
+System\footnote{More specifically, the area of electronic
+elections is \underline{not} a specialty of the author, the
+author has \underline{not} read the work of others in this
+area, and the author makes no guarentee that others have not had
+this idea first.  The author merely observed that a secure
+E-Election System is possible and designed this one as proof-of-concept.
+The author does \underline{not} intend to do any more work in this
+area.}$^,$\footnote{On the other hand, the author has been both a voter and
+an ordinary election worker in a Massachusetts suburb,
+and has drawn upon this experience to compare the E-Election System
+to the current Massachusetts system.}
+
 \section{Advantages}
 
 The main advantages of the E-Election System are:
@@ -201,7 +218,10 @@ The main advantages of the E-Election System are:
 \item Substantially reduced election staff manpower.
 \item Substantially decreased cost of running frequent elections.
 \item Substantially increased ease of voting.
-\item Somewhat better voter privacy than paper absentee balloting.
+\item If the voter votes more than once, the last vote counts,
+      as opposed to current election systems in which the first vote counts.
+      Thus a voter is free to change their mind as more information
+      becomes available.
 \end{enumerate}
 
 Hopefully these advantages will eventually lead to
@@ -787,7 +807,7 @@ A ballot is valid unless:
 \begin{enumerate}
 \item It is from a Private Voting Machine that is not valid for
 this count (e.g., it is from a test machine and test machines
-are to being included in the current count).
+are not being included in the current count).
 \item It has been superseded by a later ballot from the same
 Private Voting Machine.
 \end{enumerate}
@@ -907,9 +927,11 @@ Attempts to suppress votes are more common than attempts to buy votes.
 Because voters can check the logs of Registration and Collection Machines
 for summary information about the votes that the voter's Private Voting Machine
 has cast, using nothing but the Private Voting Machine itself,
-suppressing a vote cast with a Private Voting Machine is likely
-to be detected, and will therefore be impossible to do on a significant
-scale.
+suppressing a significant number of votes cast is likely
+to be detected.\footnote{In the current Massachusetts mail voting
+system, a voter can find out from a state web site if the Town Clerk
+has received the voter's application, has mailed the ballot, and has
+received the ballot.}.
 
 The other way to suppress E-Election votes is to refuse registration
 of legitimate voters.  But because registration is not a 1-day-and-done
@@ -959,8 +981,8 @@ be kept on a deviant web server.
 
 If some time after voting the voter manages to load non-deviant
 software, the voter might use it to check with the Collection
-Machines to see if the vote was properly collected, and thereby
-discover the hack.
+Machines to see if a vote matching that in the voter's locked box
+was properly collected, and thereby discover the hack.
 
 The testing described in section \ref{TESTING} (page \pageref{TESTING})
 will detect computers hacked in this manner.
@@ -1115,14 +1137,14 @@ When all machines are up-to-date
 these hashes should all be the same, and this sameness
 can be checked by the public.
 
-When not being used for all this the preparation machines can
+In between elections the preparation machines can
 be used to create Private Voting Machines that are not yet
 assigned to a voter, and record their UIDs and public keys
 in a separate data base.  Each of these can then be given to a voter
 and its UID can be recorded in the separate database that records
 the name, address, and birthday of the voter.
 
-When not being used for all this the preparation machines can
+Preparation machines can also
 be used to maintain the data base of Private Voting Machine
 UIDs and public keys,
 the voter data base, and the data base of
@@ -1173,7 +1195,7 @@ among the voter's other thumb drives.
 
 Standard methods need to be employed to prevent Registration and
 Collection Machines from being overloaded by spurious internet packets.
-However as the voting period will be one or several weeks, such
+However as the voting period will be several weeks, such
 overloading is unlikely to be more than a nuisance.
 
 To prevent overloading the memory used to hold the locked boxes,
