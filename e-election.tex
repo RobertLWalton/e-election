@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2020 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-October 3, 2020
+October 6, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -141,7 +141,46 @@ It could be of use with the existing optical paper system,
 for example, to ensure that the software within the voting
 machines does what it is supposed to do.
 
-\section{Outline}
+\section{Tamper-Proof Software}
+
+Tamper-Proof Software is software written in a `tamper-proof'
+programming language
+that has the following property:
+\begin{indpar}
+The translation of source code to binary files is so precisely
+specified that several independent groups of programmers can
+write compilers that will produce identical binaries from any
+given source.
+\end{indpar}
+
+Clearly a sufficiently simple assembly language qualifies, but
+we need a somewhat higher level language.  Still, such a language
+should be possible.  Two aids to this end are:
+\begin{enumerate}
+\item
+Computer efficiency is not required in this application.
+
+\item
+If two compilers disagree on some source, the matter can be
+investigated, and either one or both compilers fixed, or the
+language specification improved.
+\end{enumerate}
+
+The real goal is obtaining binaries that can be trusted to
+do what the source code says they should do.  The other
+requirement on tamper-proof software is that the source code
+be published, so the world can see what it does and look
+for flaws.
+
+The simplest tamper-proof programming language is a straight
+forward simple assembly language.  Given this, one can write
+an interpreter for a simple interpreted language in the
+assembly language.  The interpreted language should suffice
+for most of the code, and can be machine independent.
+A few functions can be optimized by being written in assembly
+language.
+
+\section{E-Election System Overview}
 
 A Private Voting Machine
 (PVM) is constructed from a single thumb drive and a
@@ -241,45 +280,6 @@ The main disadvantages of the E-Election System are:
       thumb drive and registration card are lost or stolen
       together.
 \end{enumerate}
-
-\section{Tamper-Proof Software}
-
-Tamper-Proof Software is software written in a `tamper-proof'
-programming language
-that has the following property:
-\begin{indpar}
-The translation of source code to binary files is so precisely
-specified that several independent groups of programmers can
-write compilers that will produce identical binaries from any
-given source.
-\end{indpar}
-
-Clearly a sufficiently simple assembly language qualifies, but
-we need a somewhat higher level language.  Still, such a language
-should be possible.  Two aids to this end are:
-\begin{enumerate}
-\item
-Computer efficiency is not required in this application.
-
-\item
-If two compilers disagree on some source, the matter can be
-investigated, and either one or both compilers fixed, or the
-language specification improved.
-\end{enumerate}
-
-The real goal is obtaining binaries that can be trusted to
-do what the source code says they should do.  The other
-requirement on tamper-proof software is that the source code
-be published, so the world can see what it does and look
-for flaws.
-
-The simplest tamper-proof programming language is a straight
-forward simple assembly language.  Given this, one can write
-an interpreter for a simple interpreted language in the
-assembly language.  The interpreted language should suffice
-for most of the code, and can be machine independent.
-A few functions can be optimized by being written in assembly
-language.
 
 \section{Software Distribution}\label{SOFTWARE-DISTRIBUTION}
 
