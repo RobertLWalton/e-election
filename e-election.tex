@@ -115,7 +115,7 @@ Robert L. Walton\footnote[1]{Copyright 2020 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public.}
 \\[2ex]
-October 6, 2020
+November 3, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -198,7 +198,8 @@ system.
 
 The other machines are the Registration Machines, which make
 ready-to-mark ballots available and time-stamp and certify
-encrypted finished ballots; the Collection Machines that collect
+encrypted finished ballot crytographic signatures;
+the Collection Machines that collect
 finished ballots; and the Counting Machines that count the
 ballots.  Each machine has the same design as the PVM, except
 these other machines have different software,
@@ -231,13 +232,13 @@ Machines.  Collection Machines,
 Counting Machines, and M-Boxes may be
 specific to a particular election, but Registration Machines
 and Private Voting Machines and
-their public keys are shared across multiple elections.
+their keys are shared across multiple elections.
 
 The genesis of this E-Election System is simply the author's
 realization that tamper-proof software could be made and
 combined with the notions of thumb drives as Machines and
 a virtual private network whose keys were distributed by
-hand and not over the internet to make a secure E-Election
+hand, and not over the internet, to make a secure E-Election
 System\footnote{More specifically, the area of electronic
 elections is \underline{not} a specialty of the author, the
 author has \underline{not} read the work of others in this
@@ -245,7 +246,8 @@ area, and the author makes no guarentee that others have not had
 this idea first.  The author merely observed that a secure
 E-Election System is possible and designed this one as proof-of-concept.
 The author does \underline{not} intend to do any more work in this
-area.}$^,$\footnote{On the other hand, the author has been both a voter and
+area.}$^,$\footnote{On the other hand, the author has been both a voter
+\underline{and}
 an ordinary election worker in a Massachusetts suburb,
 and has drawn upon this experience to compare the E-Election System
 to the current Massachusetts system.}
@@ -273,7 +275,7 @@ as referendums that let the voters decide issues directly
 The main disadvantages of the E-Election System are:
 \begin{enumerate}
 \item Requires voters to have basic computer literacy.
-\item Requires computer manufacturers to provide secure
+\item Requires computer manufacturers to provide unhacked basic
       bootstrap.
 \item Requires voters to report by election date
       if \underline{both} their
@@ -323,7 +325,8 @@ The software files will be on
 the same thumb drive as their associated machine's locked box, and
 therefore cannot be substituted by switching thumb drives.
 
-Private Voting Machines would be created by the town clerk.
+Private Voting Machines are created by the town clerk\footnote{Or
+other official in charge of local elections}.
 
 Software updates for the Private Voting Machines are distributed
 by the Registration Machines.  Specifically, the Private Voting
@@ -584,6 +587,9 @@ obsolete or will be used in future elections.
 Voting Machine software versions known to the Registration Machines.
 \item The exclusive OR of the random bit strings provided by the
 Registration Machines, if this is needed.
+\item A log of all transactions between the Private Voting
+Machine and Registration or Collection Machines for this election.
+\setcounter{PVM-COUNTER}{\value{enumi}}
 \end{enumerate}
 This can be done days or just minutes before the voter votes.
 
@@ -603,7 +609,8 @@ certificate contains the cryptographic hash of the encrypted ballot, the
 UIDs of the Private Voting Machine and Registration Machine,
 and a time stamp.  The certificates
 are signed by the Registration Machines but are \underline{not} encrypted.
-The certificates are copied to the Registration Machine logs.
+The certificates are copied to Registration Machine and Private Voting
+Machine logs.
 
 The submitted ballot is now sent by the Private Voting
 Machine to at least three Collection Machines.  The submitted
@@ -716,6 +723,8 @@ added to the Collection Machine locked box:
 \setcounter{enumi}{\value{CML-COUNTER}}
 \item The set of all accepted submitted ballots sent to the collection machine
 by Private Voting Machines.
+\item A log of all transactions between the Collection Machine and
+Private Voting Machines.
 \setcounter{CML-COUNTER}{\value{enumi}}
 \end{enumerate}
 
@@ -742,10 +751,11 @@ Accepted submitted ballots are added to the locked box of the
 Collection Machine.
 
 \item
-Submission Check.  The Collection Machine sends a reply containing
-the certificates of accepted submitted ballots
+Request for Log.  The log entries created by requests from the
+requesting Private Voting Machine are returned in the reply.
+This includes the certificates of accepted submitted ballots
 that were sent to the Collection Machine
-by the Private Voting Machine, if any.
+by the Private Voting Machine.
 
 \end{enumerate}
 
@@ -979,13 +989,13 @@ the hacker's intent.  To avoid detection, the thumb drive must be
 kept as it would be for the voter, so the hacker's locked box must
 be kept on a deviant web server.
 
+The testing described in section \ref{TESTING} (page \pageref{TESTING})
+will detect computers hacked in this manner.
+
 If some time after voting the voter manages to load non-deviant
 software, the voter might use it to check with the Collection
 Machines to see if a vote matching that in the voter's locked box
 was properly collected, and thereby discover the hack.
-
-The testing described in section \ref{TESTING} (page \pageref{TESTING})
-will detect computers hacked in this manner.
 
 The micro-code inside the PVM thumb drive can be hacked
 in a manner similar to the computer's BIOS.  As the thumb drives
@@ -1151,7 +1161,7 @@ the voter data base, and the data base of
 Registration Machine URLs and public/private keys.
 These data bases can have triplicate copies, each maintained
 by one of the preparation machines.  These data bases should
-be log based: each is has an underlying log of all changes
+be log based: each has an underlying log of all changes
 that is only added to and never otherwise modified,
 and the database can be remade at any point by executing the
 operations in the log.  From these data bases the Private
