@@ -945,7 +945,7 @@ are likely to become the bogey of a non-existant-bogey-scam.  This is
 a political scam in which a bogey is targetted, such as
 Communists-in-government, weapons-of-mass-destruction-in-Iraq,
 pedophiles-in-government, voter-fraud, or VMBs.
-An big advantage to the scammer is that negatives are hard to prove
+A big advantage to the scammer is that negatives are hard to prove
 convincingly; one is left with lines like `the FBI spends a
 lot of money tracking down pedophiles and has not been finding
 them in government'.  Another advantage is that the bogey, being
@@ -963,11 +963,11 @@ The voter who sells his/her vote agrees to simply not show
 up at the polls.  The VMB provides a replacement voter.
 The replacement must be of the same age and sex as the selling
 voter, else the replacement can be detected by election workers
-during checkin and checkout.  The replacement may be challenged
+during checkin and checkout.  The replacement will be challenged
 for ID if the voter did not register at town hall or has not
 voted recently or if election officials have become suspicious
 of the selling voter.  In this case, the replacement is liable to
-prompt arrest, as there is a policeman on site at the polling
+be arrested promptly, as there is a policeman on site at every polling
 place.
 
 It appears that no such scheme has been realized as of
@@ -989,8 +989,9 @@ authorities.
 
 It appears that no such scheme has been realized as of
 the current time.  However, were such as scheme realized,
-some selling voters would surely be found out and prosecuted,
-driving up the price of a vote up to unsustainable levels.
+if very many voters
+sell their votes some will be discovered and prosecuted and the cost of
+a vote will be driven upward to unsustainable levels.
 
 \item
 {\bf E-Election System}:
@@ -1010,7 +1011,7 @@ election, the voter can re-vote, or resell their vote to a
 different VMB, wiping out the sold vote.
 However the VMB will be able to check when the voter submitted
 a vote after the election is over, and so will know if the
-sold vote counted.  So the VMB cannot pay the vote seller
+sold vote counted.  Then the VMB cannot pay the vote seller
 until after the election.
 
 Like the US Mail Ballot situation, if very many voters
@@ -1035,7 +1036,8 @@ Attempts to suppress votes are more common than attempts to buy votes.
 Because voters can check the logs of Registration and Collection Machines
 for summary information about the votes that the voter's Private Voting Machine
 has cast, using nothing but the Private Voting Machine itself,
-suppressing a significant number of votes cast is likely
+suppressing a significant number of votes without knowledge of
+the voters is likely
 to be detected.\footnote{In the current Massachusetts mail voting
 system, a voter can find out from a state web site if the Town Clerk
 has received the voter's application, has mailed the ballot, and has
@@ -1156,7 +1158,7 @@ There are many ways to prepare the various Machines needed in an election,
 and the one we outline here is but an example.
 
 The town holding the election has 3 preparation computers
-that are connected to each other by a local network but which are not
+that are connected to each other by a local private network but which are not
 physically connected to the internet.%
 \footnote{If there are 3 Registration Machines,
 a PVM would have to contact a quorum of 2 Registration Machines to
@@ -1184,7 +1186,9 @@ and crosschecking multiple independent public web pages, the thumb
 drive is set read-only with a physical switch and the cryptographic
 hash of its boot file is checked using commodity software.
 Then the Machine is run and makes its own initial locked box
-containing its UID and public/private key pair.
+containing its UID and public/private key pair and its own
+symmetric passkey that is copied to a paper card and used to
+encrypt the locked box.
 
 The input to the preparation process consists of the pre-existing
 Registration Machines and three thumb drives:
@@ -1208,7 +1212,7 @@ is no input to making these Counting Machines, with
 each generating the election specific random numbers that it needs.
 
 Then the Counting Machines exchange their UIDs and public keys and M-Box
-UIDs and public keys over the local net.
+UIDs and public keys over the local private net.
 
 Lastly each Counting Machine
 writes one thumb drive for each of its M-boxes plus two more thumb drives:
