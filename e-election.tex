@@ -116,7 +116,7 @@ to the public. This document is a preliminary design and
 \underline{not} an academic paper or a complete final
 design.}
 \\[2ex]
-December 8, 2020
+December 9, 2020
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -439,7 +439,9 @@ correspond to Private Voting Machine UIDs.  To a Registration
 Machine, a voter is just a Private Voting Machine UID.
 
 \item A log of any transactions the Registration Machine has
-been involved in, including  Certificates issued by the Registration Machine.
+been involved in, including Certificates issued by the Registration Machine
+and IP addresses used by
+the Private Voting Machines to request transactions.
 
 During the election the portion of the log involving transactions with
 a particular Private Voting Machine is visible to that Private Voting
@@ -490,6 +492,7 @@ Voting Machine.  The reply is a certificate containing
 the cryptographic hash of the encrypted ballot,
 the Registration Machine and Private Voting Machine UIDs,
 the date and time according to the Registration Machine,
+the IP address of requester,
 and a digital signature of the certificate by the Registration Machine
 \pagref{CERTIFICATE-DETAILS}.
 
@@ -633,7 +636,7 @@ Private Voting Machine using its private key.
 
 
 A voter may change her/his mind and re-vote.  The last ballot
-he/she casts counts.  This is rather important in an election,
+he/she casts counts.  This may be important in an election,
 as on the one hand a voter may receive new information and
 want to change their vote, and on the other hand to avoid system
 congestion it is convenient to have votes strung out over time.
@@ -655,10 +658,13 @@ various random places in the remainder of the random bit string.\footnote{
 This is one of many ways of `adding entropy' to the message.}
 
 Second, a random symmetric key S is generated and used to encrypt
-the randomized ballot.  Then 10 more random keys K1, ..., K10 are generated
-and used in 5-way Shamir's Secret Sharing encryption
-scheme to encrypt S.  The 5-way
-scheme is such that any 5 of the 10 K-keys can decrypt the encrypted S.
+the randomized ballot.  Then
+Shamir's 5-Way Secret Sharing encryption scheme is used to generate
+10 more keys K1, ..., K10 that encode S.
+The 5-way scheme is such that any 5 of the 10 K-keys can be used
+to compute S, but fewer then 5 of the K-keys gives no information
+about S (the K-keys are not keys in the normal sense of encryption
+but are technically called `shares' of the secret S).
 Then each of the 10 K-keys is encrypted by the public key
 of a different one of the 10 M-boxes.
 
@@ -666,8 +672,6 @@ The encrypted ballot consists of:
 \begin{enumerate}
 \item The random bit string containing the embedded ballot,
       encrypted with the S key.
-\item The S key encrypted with the 10 K-keys according to
-      Shamir's Secret Sharing scheme.
 \item The 10 K-keys, each encrypted with a
       different one of the 10 M-Box public keys.
       Each encrypted K-key is paired with the unencrypted
@@ -681,12 +685,15 @@ It does \underline{not} contain the voter's UID.
 \label{CERTIFICATE-DETAILS}
 
 For each encrypted ballot, a certificate is generated
-by each of several Registration Machines acting independently.  Each certificate
-contains:
+by each of several Registration Machines acting independently.
+Each certificate contains:
 \begin{enumerate}
-\item UID of the Private Voting Machine submitting the encrypted ballot.
+\item UID of the Private Voting Machine requesting the certificate.
 \item UID of the Registration Machine certifying the ballot.
-\item Date and time, as computed by the Registration Machine.
+\item Date and time the certificate is issued,
+as computed by the Registration Machine.
+\item IP address used by the Private Voting Machine to make the request
+      for certificate.
 \item Cryptographic hash of the encrypted ballot as computed by the
       Private Voting Machine.  The encrypted ballot itself is
       \underline{never} sent to the Registration Machine.
@@ -728,7 +735,8 @@ added to the Collection Machine locked box:
 \item The set of all accepted submitted ballots sent to the collection machine
 by Private Voting Machines.
 \item A log of all transactions between the Collection Machine and
-Private Voting Machines.
+Private Voting Machines, including the IP addresses used by
+the Private Voting Machines to request transactions.
 \setcounter{CML-COUNTER}{\value{enumi}}
 \end{enumerate}
 
@@ -749,7 +757,12 @@ and the copy of the unmarked ballot checks.
 Otherwise the Collection Machine rejects the submitted
 ballot.  Note that a message not correctly encrypted with
 the private key of the submitting Private Voting Machine and the
-public key of the receiving Collection Machine is completely ignored.
+public key of the receiving Collection Machine is completely ignored.%
+\footnote{However, if the message is correctly encrypted with the
+public key of the receiving Collection Machine, the IP address
+of the message and the message itself may be
+recorded for forensic use.  But the security of the E-Election
+system cannot be compromised by such messages.}
 
 Accepted submitted ballots are added to the locked box of the
 Collection Machine.
@@ -916,22 +929,103 @@ particular vendor are hacked, the hack will be detected.
 No voting system prevents a person who knows a voter well from
 `buying' the voter's vote with some favor.
 
-However buying votes on a large enough scale to influence elections
-is difficult to do without being detected and prosecuted.
-This is just as true of our proposed E-Election System as of
-current voting systems.
-
-In addition the E-Election System has the property that a voter
+The E-Election System has the property that a voter
 can vote multiple times, with only the last vote counting.
-If buyer X buys the vote of voter Y, X has no guarantee that
-Y will not vote differently later.  X could take either the
-registration card or thumb drive from Y, but then this is
-physical evidence of a crime unless X and Y know each other
-and Y asserts they gave the card or drive to X.
+If buyer X buys the vote of voter Y, Y may vote differently
+later, effectively deleting the bought vote.  However after
+the election is over, election logs specifying when the voter
+voted are made public, so X can check then that Y did not
+vote later.
 
-So although no voting system enables large scale purchase of
-votes, the E-Election System makes it even harder for vote purchases
-to occur between people who do not know and trust each other.
+The E-Election system has somewhat different vulnerablities than the current
+election system to a Vote Market Business%
+\footnote{To my knowledge VMBs do not exist.
+One of the dangers of talking about VMBs is that they
+are likely to become the bogey of a non-existant-bogey-scam.  This is
+a political scam in which a bogey is targetted, such as
+Communists-in-government, weapons-of-mass-destruction-in-Iraq,
+pedophiles-in-government, voter-fraud, or VMBs.
+An big advantage to the scammer is that negatives are hard to prove
+convincingly; one is left with lines like `the FBI spends a
+lot of money tracking down pedophiles and has not been finding
+them in government'.  Another advantage is that the bogey, being
+non-existant, will not counter-attack.}%
+(VMB) that buys
+votes and resells them.  Such a business would be a foreign
+company accessed via the internet and not subject to prosecution.
+To understand this, we consider the current voting systems
+and the E-Election systems in more detail:
+
+\begin{itemize}
+\item
+{\bf In Person Voting}:
+The voter who sells his/her vote agrees to simply not show
+up at the polls.  The VMB provides a replacement voter.
+The replacement must be of the same age and sex as the selling
+voter, else the replacement can be detected by election workers
+during checkin and checkout.  The replacement may be challenged
+for ID if the voter did not register at town hall or has not
+voted recently or if election officials have become suspicious
+of the selling voter.  In this case, the replacement is liable to
+prompt arrest, as there is a policeman on site at the polling
+place.
+
+It appears that no such scheme has been realized as of
+the current time.  However, were such as scheme realized,
+some replacements would be jailed driving the price
+of a vote up to unsustainable levels.
+
+\item
+{\bf US Mail Balloting}:
+The voter who sells his/her vote obtains a mail-in ballot
+legally, signs the secrecy envelop, and then mails the
+ballot and secrecy envelop to the VMB with the sold election
+contest unmarked.  The VMB marks that contest, xeroxes
+everything so it can prove to the election purchaser
+that the ballot was `delivered', seals the ballot in the
+secrecy envelop, and returns this
+to the seller who submits it to the local election
+authorities.  
+
+It appears that no such scheme has been realized as of
+the current time.  However, were such as scheme realized,
+some selling voters would surely be found out and prosecuted,
+driving up the price of a vote up to unsustainable levels.
+
+\item
+{\bf E-Election System}:
+This is actually similar to US Mail Balloting with the internet
+replacing the US Mail.
+
+When the voter sells his/her vote, the voter installs a VMB
+provided version of deviant software \pagref{DEVIANT-SOFTWARE}.
+The VMB uses this to
+cast the sold vote from the voter's computer.
+
+When the deviant software is installed, the voter's PVM thumb
+drive becomes incriminating evidence.  The only way to fix
+this is for the VMB to clean up the thumb drive after casting
+the sold vote.  If it does this before the end of the
+election, the voter can re-vote, or resell their vote to a
+different VMB, wiping out the sold vote.
+However the VMB will be able to check when the voter submitted
+a vote after the election is over, and so will know if the
+sold vote counted.  So the VMB cannot pay the vote seller
+until after the election.
+
+Like the US Mail Ballot situation, if very many voters
+sell their votes some will be discovered and prosecuted and the cost of
+a vote will be driven upward to unsustainable levels.
+\end{itemize}
+
+In all these scenarios the VMB will have extreme difficulties in
+advertising and in paying vote sellers.
+The only people likely to sell their votes are poor people,
+who will be ill equipped to deal with the VMB in a covert way, and
+will be found out.
+If there are local facilitators for the VMB, then
+as they must have many clients to
+make it worthwhile, they will likely be detected and prosecuted.%
 
 
 \section{Voter Suppression}
@@ -947,10 +1041,17 @@ system, a voter can find out from a state web site if the Town Clerk
 has received the voter's application, has mailed the ballot, and has
 received the ballot.}.
 
-The other way to suppress E-Election votes is to refuse registration
-of legitimate voters.  But because registration is not a 1-day-and-done
-affair, it is much more difficult to refuse registration than it is
-to refuse a voter at the polls.
+Another way to suppress E-Election votes is to refuse registration
+of legitimate voters, but the E-Election system does not differ
+from the current election systems in this respect.
+
+A last way to suppress votes is to pay voters to not vote.  This
+could be done by a Voter Surpression Business located in a foreign
+country and not subject to prosecution.  It is possible under \underline{both}
+the E-Election system \underline{and} the current voting systems
+for third parties to determine whether a voter voted in a given
+election, so the E-Election system is no more vulnerable to this
+scheme than the current election system.
 
 \section{Hacking, Hardware, and Profit}
 
