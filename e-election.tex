@@ -110,13 +110,13 @@
 \Large
 {\LARGE  \bf An Electronic Election System}
 \\[2ex]
-Robert L. Walton\footnote{Copyright 2020 Robert L. Walton.
+Robert L. Walton\footnote{Copyright 2021 Robert L. Walton.
 Permission to copy this document {\bf verbatim} is granted by the author
 to the public. This document is a preliminary design and
 \underline{not} an academic paper or a complete final
 design.}
 \\[2ex]
-December 9, 2020
+March 29, 2021
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -519,7 +519,7 @@ Note that Private Voting Machines have no concept of time.
 If they cannot contact Registration Machines used in the last
 election, they will try to contact Registration Machines
 slated for use in future elections, and if successful, will
-update their locked box according the Request for Ballot
+update their locked box according to the Request for Ballot
 replies of these Registration Machines.
 
 When a PVM makes a request of a Registration Machine for
@@ -1197,7 +1197,7 @@ Registration Machines and three thumb drives:
 public keys, UIDs, URLs, and status of all Registration
 Machines.
 \item An Election Information Drive that contains the
-the URLs of all Collection Machines.
+the URLs of all Collection Machines and the unmarked ballot.
 \item A Private Voting Information Drive that contains the
 public keys and UIDs of all Private Voting Machines.
 \end{enumerate}
@@ -1225,13 +1225,15 @@ UIDs of all the Counting Machines.
 This is input \underline{after} the election during
 counting to all Collection Machines and all Counting Machines.
 \end{enumerate}
-These last two thumb drives written by different Counting Machines
-are identical.
+The M-Box Information Drives written by different Counting Machines
+should all be identical, and similarly for the Counting Information
+Drives.
 
 Then the 3 election officials each make a Collection Machine
 that takes as input the Registration and Election Information Drives
 and makes a Collection Information Drive containing
-the URLs, UIDs, and public keys of all the Collection Machines.
+the URLs, UIDs, and public keys of all the Collection Machines,
+and the unmarked ballot.
 
 Then the 3 election officials each update their Registration Machine
 using as input the Registration, M-Box, and Collection
@@ -1307,8 +1309,8 @@ Although any thumb drives can be used, preferably ones with
 a physical read-only switch, it would be better to
 have special thumb drives with distinctive markings or even
 a larger than usual size.  This would make it less likely
-that a voter's Voter Registration Machine would be lost
-among the voter's other thumb drives.
+that a voter's PVM would be lost
+among the voter's other non-election thumb drives.
 
 \subsection{Denial of Service}
 
@@ -1333,5 +1335,37 @@ However, better information of this kind is made publicly available
 and ISPs are unlikely to give this meta-data to anyone trying to
 guess voter IP addresses.
 
+
+\section{Some Thoughts on the Current Election System}
+
+The current Massachusetts voting system is based on paper
+ballots marked at a polling place (leaving aside mail-in)
+and counted by an electronic ballot box.  The polling place
+is staffed during polling by at least 2 election workers per 500
+actual voters, one for check-in and one for check-out.  Most
+election workers are in effect volunteers: they may be officially
+town employees, but they only earn \$100-\$400 per year.
+
+Much of the security of the current system comes from the large
+number of election works in a polling place who have
+a ring-side seat for watching each other.  Most of these workers
+are volunteers dedicated to making sure the system
+works as it is supposed to.
+
+What goes on inside the ballot boxes when they count the ballots
+is, however, not visible to anyone in the polling place.  To ensure
+they are counting correctly, after each election some precincts
+are selected at random, recounted by hand, and the hand and ballot
+box counts are compared to see if they match.  It is very
+important that this be done, even though year after year will go
+by with no significant mis-matches.
+
+In addition it should be remembered that the easiest way to commit
+voting fraud is to try to prevent people from voting at all.
+There should routinely be investigations of random samples of
+voters who claim to have been illegally not allowed to register,
+or not allowed to vote when legally registered,
+with summary statistics published.  There should routinely be per precinct
+measurements of voter waiting times, with statistics published.
 
 \end{document}
