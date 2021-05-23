@@ -116,7 +116,7 @@ to the public. This document is a preliminary design and
 \underline{not} an academic paper or a complete final
 design.}
 \\[2ex]
-March 29, 2021
+May 23, 2021
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -201,7 +201,7 @@ system.
 
 The other machines are the Registration Machines, which make
 ready-to-mark ballots available and time-stamp and certify
-finished ballot crytographic signatures;
+finished ballot cryptographic signatures;
 the Collection Machines that collect
 finished ballots; and the Counting Machines that count the
 ballots.  Each machine has the same design as the PVM, except
@@ -245,7 +245,7 @@ hand, and not over the internet, to make a secure E-Election
 System\footnote{More specifically, the area of electronic
 elections is \underline{not} a specialty of the author, the
 author has \underline{not} read the work of others in this
-area, and the author makes no guarentee that others have not had
+area, and the author makes no guarantee that others have not had
 this idea first.  The author merely observed that a secure
 E-Election System is possible and produced this preliminary
 design as a proof-of-concept.
@@ -937,19 +937,19 @@ the election is over, election logs specifying when the voter
 voted are made public, so X can check then that Y did not
 vote later.
 
-The E-Election system has somewhat different vulnerablities than the current
+The E-Election system has somewhat different vulnerabilities than the current
 election system to a Vote Market Business%
 \footnote{To my knowledge VMBs do not exist.
 One of the dangers of talking about VMBs is that they
-are likely to become the bogey of a non-existant-bogey-scam.  This is
-a political scam in which a bogey is targetted, such as
+are likely to become the bogey of a non-existent-bogey-scam.  This is
+a political scam in which a bogey is targeted, such as
 Communists-in-government, weapons-of-mass-destruction-in-Iraq,
 pedophiles-in-government, voter-fraud, or VMBs.
 A big advantage to the scammer is that negatives are hard to prove
 convincingly; one is left with lines like `the FBI spends a
 lot of money tracking down pedophiles and has not been finding
 them in government'.  Another advantage is that the bogey, being
-non-existant, will not counter-attack.}%
+non-existent, will not counter-attack.}%
 (VMB) that buys
 votes and resells them.  Such a business would be a foreign
 company accessed via the internet and not subject to prosecution.
@@ -1048,7 +1048,7 @@ of legitimate voters, but the E-Election system does not differ
 from the current election systems in this respect.
 
 A last way to suppress votes is to pay voters to not vote.  This
-could be done by a Voter Surpression Business located in a foreign
+could be done by a Voter Suppression Business located in a foreign
 country and not subject to prosecution.  It is possible under \underline{both}
 the E-Election system \underline{and} the current voting systems
 for third parties to determine whether a voter voted in a given
@@ -1338,19 +1338,48 @@ guess voter IP addresses.
 
 \section{Some Thoughts on the Current Election System}
 
-The current Massachusetts voting system is based on paper
-ballots marked at a polling place (leaving aside mail-in)
+The E-Election System gets its integrity by doing all critical
+functions using triplicate independent groups of people
+whose actions can be checked against each other.  The current
+Massachusetts voting system gets it integrity by different
+means that are worth explicating here.
+
+The Massachusetts voting system is based on paper
+ballots marked at a polling place (leaving aside mail-in for the moment)
 and counted by an electronic ballot box.  The polling place
-is staffed during polling by at least 2 election workers per 500
-actual voters, one for check-in and one for check-out.  Most
-election workers are in effect volunteers: they may be officially
-town employees, but they only earn \$100-\$400 per year.
+is staffed during polling by roughly 2 election workers per 500
+actual voters, one for checkin and one for checkout.  Most
+election workers are in effect volunteers: they are officially
+town employees (and thus bound by regulations and background checks
+ensuring proper behavior), but they only earn \$100-\$400 per year.
 
 Much of the security of the current system comes from the large
-number of election works in a polling place who have
-a ring-side seat for watching each other.  Most of these workers
+number of election workers in a polling place who have
+a ring-side seat for watching each other.  In general these workers
 are volunteers dedicated to making sure the system
 works as it is supposed to.
+
+The checkin workers have a list of registered voters, in which
+they mark each voter that is given a ballot.  The checkout workers
+have an identical list, in which they mark each voter that puts
+a ballot in the electronic ballot box.  The result is two independent
+lists of who voted.  Should, for example, a dead person vote, it
+would be easy to prove by checking these lists and the death certificate.
+
+The lists also give counts of the number of votes for each precinct.
+The electronic voting machine produces its own count, which should match.
+After the election is over, the ballots are removed from the machine
+and counted by hand, and this fourth count should match the others.
+
+Each electronic voting machine prints two copies of its vote counts
+at the end of
+the election, and one of these is posted in a public place (e.g., school
+building door).
+
+If there were voting fraud it would be easy to prove, as there is
+a dense paper trail.  If there were significant fraud, it would be
+easy to both find and prove.  This is why claims of extensive
+fraud not accompanied by extensive proof are routinely rejected by courts.
 
 What goes on inside the ballot boxes when they count the ballots
 is, however, not visible to anyone in the polling place.  To ensure
@@ -1360,12 +1389,38 @@ box counts are compared to see if they match.  It is very
 important that this be done, even though year after year will go
 by with no significant mis-matches.
 
-In addition it should be remembered that the easiest way to commit
-voting fraud is to try to prevent people from voting at all.
-There should routinely be investigations of random samples of
-voters who claim to have been illegally not allowed to register,
-or not allowed to vote when legally registered,
-with summary statistics published.  There should routinely be per precinct
-measurements of voter waiting times, with statistics published.
+In Massachusetts mail-in voting is done as follows.  The voter
+obtains an application form (e.g., from the web) and submits it to the
+town clerk.  It is signed.  The clerk sends the voter a ballot
+and a privacy envelop.  The voter marks the ballot, puts it
+into the privacy envelop which has the voters name and address
+on it, signs and seals the privacy envelop, and returns that to the town
+clerk.  The privacy envelops are tabulated and the registration
+lists at checkin/checkout have the voter marked as having
+voted by mail, so the voter cannot vote in person.  At the
+beginning of the election proper, privacy envelops are slit
+but not opened, and are sorted to match the checkin/out registration
+list order.  Then an election worker takes a batch of privacy envelops
+to checkin where they are checked in, takes them on to checkout
+where they are checked-out, and then standing next to the voting
+machine opens each envelop and puts the ballot directly into the machine.
+The set of empty privacy envelops constitutes a list of who voted
+by mail, and this list has the voters' signatures.
+Again, if there were significant fraud, it would be
+easy to find and prove.
+
+The only likely way to commit voting fraud is to prevent people from
+voting at all.  A good way to defend against this is to establish
+independent monitors that monitor the election and answer the following
+questions statistically:
+\begin{enumerate}
+\item How many legitimate voters were not permitted to register.
+\item Were registered voters unable to vote.  For instance,
+were there excessively long voter lines due to polling place
+under-staffing.
+\item Have the voting machines been tested by re-counting a few
+randomly chosen precincts by hand and matching the hand count
+to the machine count.
+\end{enumerate}
 
 \end{document}
