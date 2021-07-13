@@ -116,7 +116,7 @@ to the public. This document is a preliminary design and
 \underline{not} an academic paper or a complete final
 design.}
 \\[2ex]
-May 27, 2021
+July 13, 2021
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -139,8 +139,8 @@ using paper ballots.
 
 Tamper-proof software may have other applications.
 It could be of use with the existing optical paper system,
-for example, to ensure that the software within the voting
-machines does what it is supposed to do.
+for example, to ensure that the software within the ballot
+boxes does what it is supposed to do.
 
 \section{Tamper-Proof Software}
 
@@ -215,8 +215,8 @@ any 5 out of 10 election officials to cooperatively
 provide decrypted M-Boxes in order to decrypt ballots and
 produce final counts.
 
-Each Machine and each M-Box has a public key and a private key.
-The E-Election Machines that participate in
+Each machine and each M-Box has a public key and a private key.
+The E-Election machines that participate in
 a particular election for a particular
 precinct form a virtual private network that is disconnected from
 the rest of the world, the internet in particular.  This E-Election
@@ -239,7 +239,7 @@ their keys are shared across multiple elections.
 
 The genesis of this E-Election System is simply the author's
 realization that tamper-proof software could be made and
-combined with the notions of thumb drives as Machines and
+combined with the notions of thumb drives as machines and
 a virtual private network whose keys were distributed by
 hand, and not over the internet, to make a secure E-Election
 System\footnote{More specifically, the area of electronic
@@ -308,12 +308,12 @@ the E-Election files.  Each organization starts with the same public
 source files.  Each organization writes its own compiler for the
 tamper-proof software.  Each organization publishes on its web site
 the source files and binary files, and cryptographic hashes that
-can be used to verify that the software on an E-Election Machine
+can be used to verify that the software on an E-Election machine
 matches that provided by the organization.
 
 All the organizations should end up with identical files and
 cryptographic hashes.  The cryptographic hashes (e.g., SHA-256)
-of software on the E-Election Machine thumb drives can be checked
+of software on the E-Election machine thumb drives can be checked
 by widely available commodity software running under commodity
 operating systems.  Results can be compared with the hashes on
 all the organization web sites.
@@ -322,7 +322,7 @@ Only the cryptographic hash of the boot file needs to be checked,
 as it can contain cryptographic hashes of the other files and it will check
 the other files before they are used in running the machine.
 To avoid hacking by commodity software during a cryptographic hash check,
-the E-Election Machine thumb drive should have a physical read-only
+the E-Election machine thumb drive should have a physical read-only
 switch.
 
 The software files will be on
@@ -335,7 +335,7 @@ other official in charge of local elections}.
 Software updates for the Private Voting Machines are distributed
 by the Registration Machines.  Specifically, the Private Voting
 Machines contain in their locked boxes the public keys of
-the organizations which provide their software.  Registration machines
+the organizations which provide their software.  Registration Machines
 can inform a Private Voting Machine when an update is available,
 and then the Private Voting Machine can get and compare three copies of the
 update from three different independent
@@ -370,7 +370,7 @@ in public/private pairs.
 These are \underline{not} the same as the passkey of any locked box.
 Passkeys are symmetric encryption keys.
 
-Each Machine and each M-Box
+Each machine and each M-Box
 has a Unique ID, or UID, which is a 1024 bit random number
 used to identify the machine or M-Box.  This UID serves as the
 machine's or M-Box's name.
@@ -1155,7 +1155,7 @@ may involve hardware or software provided by private companies.
 
 \section{Election Preparation}
 
-There are many ways to prepare the various Machines needed in an election,
+There are many ways to prepare the various machines needed in an election,
 and the one we outline here is but an example.
 
 The town holding the election has 3 preparation computers
@@ -1181,12 +1181,12 @@ by means similar to those described here.  Assume each election
 official has one Registration Machine.
 
 Initially the software for each election machine
-is copied from the internet to the Machine's thumb drive,
+is copied from the internet to the machine's thumb drive,
 the cryptographic hash of its boot file is obtained by examining
 and crosschecking multiple independent public web pages, the thumb
 drive is set read-only with a physical switch and the cryptographic
 hash of its boot file is checked using commodity software.
-Then the Machine is run and makes its own initial locked box
+Then the machine is run and makes its own initial locked box
 containing its UID and public/private key pair and its own
 symmetric passkey that is copied to a paper card and used to
 encrypt the locked box.
@@ -1342,7 +1342,7 @@ guess voter IP addresses.
 The E-Election System gets its integrity by doing all critical
 functions using triplicate independent groups of people
 whose actions can be checked against each other.  The current
-Massachusetts voting system gets it integrity by different
+Massachusetts voting system gets some of its integrity by different
 means that are worth explicating here.
 
 The Massachusetts voting system is based on paper
@@ -1364,17 +1364,18 @@ The checkin workers have a list of registered voters, in which
 they mark each voter that is given a ballot.  The checkout workers
 have an identical list, in which they mark each voter that puts
 a ballot in the electronic ballot box.  The result is two independent
-lists of who voted.  Should, for example, a dead person vote, it
+lists of who voted.  Note the use of independent redundancy.
+Should, for example, a dead person `vote', it
 would be easy to prove by checking these lists and the death certificate.
 
 The lists also give counts of the number of votes for each precinct.
-The electronic voting machine produces its own count, which should match.
-After the election is over, the ballots are removed from the machine
+The electronic ballot box produces its own count, which should match.
+After the election is over, the ballots are removed from the ballot box
 and counted by hand, and this fourth count should match the others.
 
-Each electronic voting machine prints two copies of its vote counts
-at the end of
-the election, and one of these is posted in a public place (e.g., school
+Each electronic ballot box prints two copies of its vote counts
+at the end of the election,
+and one of these is immediately posted in a public place (e.g., school
 building door).
 
 If there were voting fraud it would be easy to prove, as there is
@@ -1385,8 +1386,11 @@ fraud not accompanied by extensive proof are routinely rejected by courts.
 What goes on inside the ballot boxes when they count the ballots
 is, however, not visible to anyone in the polling place.  To ensure
 they are counting correctly, after each election some precincts
-are selected at random, recounted by hand, and the hand and ballot
-box counts are compared to see if they match.  It is very
+should be selected at random, recounted by hand, and the hand and ballot
+box counts are compared to see if they match.
+Lawyers representing the major candidates should monitor the recount.
+Each precinct is independent, so each can be counted separately
+by itself.  It is very
 important that this be done, even though year after year will go
 by with no significant mis-matches.
 
@@ -1403,12 +1407,19 @@ beginning of the election proper, privacy envelops are slit
 but not opened, and are sorted to match the checkin/out registration
 list order.  Then an election worker takes a batch of privacy envelops
 to checkin where they are checked in, takes them on to checkout
-where they are checked out, and then standing next to the voting
-machine opens each envelop and puts the ballot directly into the machine.
+where they are checked out, and then standing next to the ballot
+box opens each envelop and puts the ballot directly into the
+ballot box.
 The set of empty privacy envelops constitutes a list of who voted
 by mail, and this list has the voters' signatures.
 Again, if there were significant fraud, it would be
 easy to find and prove.
+
+Also, in Massachusetts a voter can go online and check the
+status of her/his mail-in ballot.  The voter can see if
+the town clerk has received the application, if the clerk has
+mailed the ballot, and if the clerk has received the privacy
+envelop containing the ballot.
 
 The only likely way to commit voting fraud is to prevent people from
 voting at all.  A good way to defend against this is to establish
@@ -1416,15 +1427,19 @@ independent monitors that monitor the election and answer the following
 questions statistically:
 \begin{enumerate}
 \item How many legitimate voters were not permitted to register.
-\item Were legitimate registered voters unable to vote.  For instance,
+\item Were legitimate registered voters unable to vote.  Importantly,
 were there excessively long voter lines due to polling place
-under-staffing.
+under-staffing.  Additionally,
+are there registered voters who are \underline{not} on the lists
+of people who actually voted who credibly claim to have submitted an
+absentee ballot.
 \item
-Do the lists of people who voted match the results of interviews of
-registered voters after the election.
-\item Have the voting machines been tested by re-counting a few
+Do the lists of people who voted contain names of people who
+can credibly be shown to have not voted.
+\item Have the ballot boxes been tested by re-counting a few
 randomly chosen precincts by hand and matching the hand count
-to the machine count.
+to the ballot box's count, with lawyers representing major candidates
+present.
 \end{enumerate}
 
 \end{document}
