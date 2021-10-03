@@ -116,7 +116,7 @@ to the public. This document is a preliminary design and
 \underline{not} an academic paper or a complete final
 design.}
 \\[2ex]
-July 17, 2021
+October 3, 2021
 \\[2ex]
 {\bf Table of Contents}
 \end{center}
@@ -1350,7 +1350,10 @@ ballots marked at a polling place (leaving aside mail-in for the moment)
 and counted by an electronic ballot box.  The polling place
 is staffed during polling by 5 election workers per precinct,
 \footnote{A precinct has at most 3,000 registered voters, and it is
-not unusual for 85\% of these to vote in a contested election.}
+not unusual for 85\% of these to vote in a contested election.  Also
+note that election workers work in shifts, so 5 election workers
+per precinct are required for each shift, though many workers
+work several shifts.}
 two for checkin, two for checkout, and one to supervise the precinct's
 ballot box.  Most
 election workers are in effect volunteers: they are officially
@@ -1390,7 +1393,7 @@ What goes on inside the ballot boxes when they count the ballots
 is, however, not visible to anyone in the polling place.  To ensure
 they are counting correctly, after each election some precincts
 should be selected at random, recounted by hand, and the hand and ballot
-box counts are compared to see if they match.
+box counts should be compared to see if they match.
 Lawyers representing the major candidates should monitor the recount.
 Each precinct is independent, so each can be counted separately
 by itself.  It is very
@@ -1438,7 +1441,15 @@ of people who actually voted who credibly claim to have submitted an
 absentee ballot.
 \item
 Do the lists of people who voted contain names of people who
-can credibly be shown to have not voted.
+can credibly be shown to have not voted.  This may be hard to
+properly determine, as a few percent of potential voters
+may not remember accurately whether or not they voted.  Video
+and audio recording of the checkin and checkout process might
+be used to resolve discrepancies.\footnote{Computerized checkin and
+checkout have not been allowed in Massachusetts, because you never
+know what a computer is doing.  However, video and audio recording
+might be synchronized with computerized checkin and checkout, allowing
+the later.}
 \item Have the ballot boxes been tested by re-counting a few
 randomly chosen precincts by hand and matching the hand count
 to the ballot box's count, with lawyers representing major candidates
