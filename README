@@ -1,0 +1,15 @@
+The E-Election System is a system for holding
+all-electronic elections.
+
+The voter is given a thumb drive which functions like a
+computer: it is used instead of the computer's hard disk
+when it is run on a computer.  This is combined with
+tamper-proof software and a virtual private network
+whose keys are delivered via thumb drives and NOT copied
+over the internet to make a completely electronic secure
+election system.
+
+The e-election.pdf file is a preliminary design for such
+a system.  The author does not intend to implement the
+system.  See the e-election.pdf footnotes for more
+status information.
